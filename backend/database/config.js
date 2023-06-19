@@ -5,17 +5,23 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const sequelize = new Sequelize(
-    process.env.POSTGRES_DATABASE_NAME, 
-    process.env.POSTGRES_DATABASE_USER, 
-    process.env.POSTGRES_DATABASE_PASSWORD, 
+    process.env.POSTGRES_DB_NAME, 
+    process.env.POSTGRES_DB_USER, 
+    process.env.POSTGRES_DB_PASSWORD, 
     {
         dialect: 'postgres',
         logging: console.log,
         define: {
             charset: 'utf-8',
             collate: 'utf8_general_ci'
-        }
-    }
+        },
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+          }
+    },
 );
 
 try {
