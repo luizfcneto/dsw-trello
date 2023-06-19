@@ -1,19 +1,14 @@
 import express from "express";
-import bodyParser from "body-parser";
 import session from "express-session";
+import userRouter from "./routes/userRouter.js";
 
 let app = express();
 const PORT = 3000;
 const HOSTNAME = "localhost";
 
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.get("/", function(req, res, next) {
-    res.json({
-        message: "Ola Mundo"
-    });
-});
-
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use('/users', userRouter);
 
 app.listen(PORT, HOSTNAME, (error) => {
     if(error){
