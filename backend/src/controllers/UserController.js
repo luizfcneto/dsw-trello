@@ -1,15 +1,16 @@
 import { validateUser } from '../validations/userValidations.js';
-import UserServices from '../services/UserServices.js';
+import { userRepository } from '../services/UserServices.js';
 import ValidationError from '../errors/ValidationError.js';
 import UserAlreadyExistsError from '../errors/UserAlreadyExistsError.js';
 import UserNotFoundError from '../errors/UserNotFoundError.js';
+import { encript } from '../services/HashServices.js';
 
 export default { 
     async getUserById(req, res, next){
         const id = req.params.id;
 
         try {
-            const databaseResponse = await UserServices.getById(id);
+            const databaseResponse = await userRepository.getById(id);
             if(!databaseResponse){
                 throw new UserNotFoundError("Not found");
             }
@@ -35,14 +36,15 @@ export default {
     },
 
     async createUser(req, res, next) {
-        const {user} = req.body;
+        let {user} = req.body;
         try{
             validateUser(user);
-            const userAlreadyExists = await UserServices.alreadyExists(user);
+            const userAlreadyExists = await userRepository.alreadyExists(user);
             if(userAlreadyExists){
                 throw new UserAlreadyExistsError("Cannot be persisted with the same email");
             }
-            const databaseReponse = await UserServices.create(user);
+            user.password = await encript(user.password); 
+            const databaseReponse = await userRepository.create(user);
 
             res.status(201).json({
                 user: databaseReponse

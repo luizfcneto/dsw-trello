@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import sequelize from "../../database/config.js";
 
-const UserServices = {
+export const userRepository = {
     async create(user) {
         await sequelize.sync();
         return await User.create(user);
@@ -16,7 +16,18 @@ const UserServices = {
     async getById(id) {
         await sequelize.sync();
         return await User.findByPk(id);
+    },
+
+    async getByEmail(email) {
+        await sequelize.sync();
+        return await User.findOne({ where: { email: email } } );
+    },
+
+    async update(user) {
+        await sequelize.sync();
+        return await User.update(
+            { attempts: user.attempts },
+            { where: { user_id: user.uniqno } }
+        );
     }
 }
-
-export default UserServices;
