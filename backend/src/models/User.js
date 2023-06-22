@@ -27,6 +27,10 @@ User.init(
         recoveryToken: {
             type: DataTypes.STRING,
             field: 'recovery_token'
+        },
+        attempts: {
+            type: DataTypes.SMALLINT,
+            allowNull: false
         }
     },
     {

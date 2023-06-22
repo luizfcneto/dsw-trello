@@ -1,4 +1,4 @@
-import ValidationError from "../errors/ValidationError.js";
+import ValidationError from "../errors/Validation.js";
 
 export const validateUser = (user) => {
     if(!user.username){

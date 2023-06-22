@@ -1,9 +1,9 @@
-import { validateUser } from '../validations/userValidations.js';
-import { userRepository } from '../services/UserServices.js';
-import ValidationError from '../errors/ValidationError.js';
-import UserAlreadyExistsError from '../errors/UserAlreadyExistsError.js';
-import UserNotFoundError from '../errors/UserNotFoundError.js';
-import { encript } from '../services/HashServices.js';
+import { validateUser } from '../validations/user.js';
+import { userRepository } from '../services/User.js';
+import ValidationError from '../errors/Validation.js';
+import UserAlreadyExistsError from '../errors/UserAlreadyExists.js';
+import UserNotFoundError from '../errors/UserNotFound.js';
+import { BCRYPT } from '../services/Hash.js';
 
 export default { 
     async getUserById(req, res, next){
@@ -43,7 +43,8 @@ export default {
             if(userAlreadyExists){
                 throw new UserAlreadyExistsError("Cannot be persisted with the same email");
             }
-            user.password = await encript(user.password); 
+            user.password = await BCRYPT.encript(user.password);
+            user.attempts = user?.attempts ? user.attempts : 0; 
             const databaseReponse = await userRepository.create(user);
 
             res.status(201).json({
