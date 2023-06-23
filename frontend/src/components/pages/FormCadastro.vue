@@ -1,18 +1,19 @@
 <template>
     <div>
         <h2>Cadastro</h2>
-        <form class="signup-form">
+        <h2 v-show="warning.message !== null">{{ warning.message }}</h2>
+        <form class="signup-form" @submit.prevent="submitForm">
             <div class="form-group">
                 <label for="username">Usuário: </label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" v-model="request.user.username" required>
             </div>
             <div class="form-group">
                 <label for="email">E-mail: </label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" v-model="request.user.email" required>
             </div>
             <div class="form-group">
                 <label for="password">Senha: </label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" v-model="request.user.password" required>
             </div>
             <div class="form-group">
                 <label for="confirm-password">Confirmar Senha: </label>
@@ -24,6 +25,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     // Nome do componente (opcional)
     name: 'FormCadastro',
@@ -35,11 +38,22 @@ export default {
     // Propriedades de dados do componente
     data() {
         return {
-        };
+            warning: {
+                message: null,
+            },
+            request: {
+                user: {
+                    username: null,
+                    email: null,
+                    password: null,
+                }
+            }
+        }
     },
 
     // Propriedades recebidas do componente pai (opcional)
     props: {
+
     },
 
     // Propriedades computadas (opcional)
@@ -48,10 +62,34 @@ export default {
 
     // Métodos do componente (opcional)
     methods: {
+        async submitForm() {
+            console.log("submitForm executado");
+            console.log(this.$data);
+            try {
+                const response = await axios.post('http://localhost:3000/user/', this.$data.request);
+
+                console.log("Deu certo");
+                console.log(response.data);
+                this.clearInputs();
+
+            } catch (error) {
+                console.log("Deu merda");
+                this.$data.warning.message = error.message;
+                this.clearInputs();
+                console.log(error);
+            }
+        },
+        clearInputs() {
+            this.$data.request.user.username = "";
+            this.$data.request.user.email = "";
+            this.$data.request.user.password = "";
+            this.$data.request.user.confirmPassword = "";
+        }
     },
 
     // Lógica a ser executada quando o componente é criado (opcional)
     created() {
+        console.log(this.$data);
     },
 
     // Lógica a ser executada quando o componente é montado no DOM (opcional)
