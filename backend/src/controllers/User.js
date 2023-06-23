@@ -40,6 +40,7 @@ export default {
     },
 
     async createUser(req, res, next) {
+        console.log("Executando o método para criar usuário", req.body);
         let {user} = req.body;
         try{
             validateUser(user);
