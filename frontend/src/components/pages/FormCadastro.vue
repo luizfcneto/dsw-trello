@@ -25,7 +25,49 @@
 
 <script>
 export default {
-    name: 'FormCadastro'
+    // Nome do componente (opcional)
+    name: 'FormCadastro',
+
+    // Componentes aninhados (opcional)
+    components: {
+    },
+
+    // Propriedades de dados do componente
+    data() {
+        return {
+        };
+    },
+
+    // Propriedades recebidas do componente pai (opcional)
+    props: {
+    },
+
+    // Propriedades computadas (opcional)
+    computed: {
+    },
+
+    // Métodos do componente (opcional)
+    methods: {
+    },
+
+    // Lógica a ser executada quando o componente é criado (opcional)
+    created() {
+    },
+
+    // Lógica a ser executada quando o componente é montado no DOM (opcional)
+    mounted() {
+    },
+
+    // Outros ganchos de ciclo de vida (opcional)
+    updated() {
+
+    },
+
+    destroyed() {
+
+    }
+
+
 }
 </script>
 
