@@ -26,7 +26,11 @@ export const userRepository = {
     async update(user) {
         await sequelize.sync();
         return await User.update(
-            { attempts: user.attempts },
+            { 
+                attempts: user.attempts,
+                username: user.username,
+                recoveryToken: user.recoveryToken
+            },
             { where: { user_id: user.uniqno } }
         );
     }

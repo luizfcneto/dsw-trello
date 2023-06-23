@@ -1,4 +1,3 @@
-import Unauthorized from "../errors/Unauthorized.js";
 import ValidationError from "../errors/Validation.js";
 
 export const validateHeadersAuthorization = (req) => {

@@ -30,7 +30,8 @@ User.init(
         },
         attempts: {
             type: DataTypes.SMALLINT,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0
         }
     },
     {
