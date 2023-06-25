@@ -1,3 +1,4 @@
+import BoardNotFoundError from '../errors/BoardNotFound.js';
 import { boardRepository } from '../services/BoardServices.js';
 import { encript } from '../services/HashServices.js';
 
@@ -8,7 +9,7 @@ export default {
         try {
             const databaseResponse = await boardRepository.getById(id);
             if(!databaseResponse){
-                //throw new UserNotFoundError("Not found");
+                throw new BoardNotFoundError("Not found");
             }
 
             res.status(200).json({
@@ -16,13 +17,13 @@ export default {
             });
 
         }catch(error){
-            /* console.error(`${error.name} - ${error.message}`);
-            if(error instanceof UserNotFoundError){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof BoardNotFoundError){
                 res.status(error.statusCode).json({
-                    message: "User Not Found"
+                    message: "Board Not Found"
                 });
                 return;
-            } */
+            }
 
             res.status(500).json({
                 message: "Something went wrong, try again later..."
@@ -35,7 +36,7 @@ export default {
         let {board} = req.body;
         try{
             //validateBoard(board);
-            const databaseReponse = await boardRepository.create(user);
+            const databaseReponse = await boardRepository.create(board);
 
             res.status(201).json({
                 board: databaseReponse
