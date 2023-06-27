@@ -18,10 +18,10 @@ User.init(
     },
     {
         sequelize,
-        modelName: 'User',
-        tableName: 'Users',
+        modelName: 'Board',
+        tableName: 'Boards',
         timestamps: false
     }
 );
 
-export default User;
+export default Board;

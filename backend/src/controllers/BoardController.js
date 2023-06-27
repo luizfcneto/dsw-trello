@@ -1,4 +1,6 @@
 import BoardNotFoundError from '../errors/BoardNotFound.js';
+import ValidationError from '../errors/Validation.js';
+import { validateBoard } from '../validations/Board.js';
 import { boardRepository } from '../services/BoardServices.js';
 import { encript } from '../services/HashServices.js';
 
@@ -35,7 +37,7 @@ export default {
     async createBoard(req, res, next) {
         let {board} = req.body;
         try{
-            //validateBoard(board);
+            validateBoard(board);
             const databaseReponse = await boardRepository.create(board);
 
             res.status(201).json({
@@ -44,12 +46,12 @@ export default {
 
         }catch(error){
             console.error(`${error.name} - ${error.message}`);
-            /* if(error instanceof ValidationError){
+            if(error instanceof ValidationError){
                 res.status(error.statusCode).json({
                     message: "Bad Request, body request is missing information"
                 })
                 return;
-            } */
+            }
             
             res.status(500).json({
                 message: "Something went wrong, try again later..."
