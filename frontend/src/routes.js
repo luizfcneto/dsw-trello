@@ -1,5 +1,5 @@
 import FormCadastro from "./components/pages/FormCadastro.vue";
-
+import FormLogin from "./components/pages/FormLogin.vue";
 
 export const routes = [
     {
@@ -7,4 +7,9 @@ export const routes = [
         "name": "form-cadastro",
         "component": FormCadastro
     },
+    {
+        "path": "/login",
+        "name": "login",
+        "component": FormLogin
+    }
 ]

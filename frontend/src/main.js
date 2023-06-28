@@ -15,9 +15,11 @@ Vue.config.productionTip = false
 
 new Vue({
   data: {
-    credentials: null,
+    credentials: {
+      token: null
+    },
     config: {
-      url: "http://localhost:8080"
+      url: process.env.BASE_URL
     }
   },
 

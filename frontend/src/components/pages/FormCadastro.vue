@@ -1,22 +1,23 @@
 <template>
-    <div>
+    <div class="form-cadastro-container">
         <h2>Cadastro</h2>
-        <h2 v-show="warning.message !== null">{{ warning.message }}</h2>
+        <ErrorSpan class="error-span" v-show="warning.message !== null" :message="warning.message">
+        </ErrorSpan>
         <form class="signup-form" @submit.prevent="submitForm">
             <div class="form-group">
-                <label for="username">Usuário: </label>
+                <label for="username">Usuário: * </label>
                 <input type="text" id="username" name="username" v-model="request.user.username" required>
             </div>
             <div class="form-group">
-                <label for="email">E-mail: </label>
+                <label for="email">E-mail: *</label>
                 <input type="email" id="email" name="email" v-model="request.user.email" required>
             </div>
             <div class="form-group">
-                <label for="password">Senha: </label>
+                <label for="password">Senha: *</label>
                 <input type="password" id="password" name="password" v-model="request.user.password" required>
             </div>
             <div class="form-group">
-                <label for="confirm-password">Confirmar Senha: </label>
+                <label for="confirm-password">Confirmar Senha: * </label>
                 <input type="password" id="confirm-password" name="confirm-password" required>
             </div>
             <button type="submit">Cadastrar</button>
@@ -25,7 +26,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import { createUser } from "../../services/api.js";
+import ErrorSpan from "../shared/ErrorSpan.vue";
 
 export default {
     // Nome do componente (opcional)
@@ -33,6 +35,7 @@ export default {
 
     // Componentes aninhados (opcional)
     components: {
+        ErrorSpan
     },
 
     // Propriedades de dados do componente
@@ -64,20 +67,20 @@ export default {
     methods: {
         async submitForm() {
             console.log("submitForm executado");
-            console.log(this.$data);
-            try {
-                const response = await axios.post('http://localhost:3000/user/', this.$data.request);
+            console.log(this.$data.request);
+            const response = await createUser(this.$data.request);
 
-                console.log("Deu certo");
-                console.log(response.data);
-                this.clearInputs();
-
-            } catch (error) {
-                console.log("Deu merda");
-                this.$data.warning.message = error.message;
-                this.clearInputs();
-                console.log(error);
+            if (response instanceof Error) {
+                console.log(response);
+                this.warning.message = `${response.response.status} - ${response.response.data.message}`;
             }
+
+            if (response.status === 201) {
+                this.warning.message = "";
+                this.clearInputs();
+                this.$router.push("home");
+            }
+
         },
         clearInputs() {
             this.$data.request.user.username = "";
@@ -89,7 +92,7 @@ export default {
 
     // Lógica a ser executada quando o componente é criado (opcional)
     created() {
-        console.log(this.$data);
+        this.clearInputs();
     },
 
     // Lógica a ser executada quando o componente é montado no DOM (opcional)
@@ -110,8 +113,19 @@ export default {
 </script>
 
 <style>
+.form-cadastro-container {
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    flex-flow: column;
+}
+
+.error-span {
+    width: 50%;
+}
+
 .signup-form {
-    max-width: 25em;
+    width: 50%;
     margin: 0 auto;
     padding: 1em;
     border: 1px solid #ccc;
@@ -125,7 +139,7 @@ export default {
 h2 {
     width: 100%;
     text-align: center;
-    margin: 1em auto;
+    margin: 0.5em auto;
     font-size: 32px;
     font-weight: bold;
 }
