@@ -1,10 +1,10 @@
 import { validateUser } from '../validations/user.js';
-import { userRepository } from '../services/User.js';
+import { userRepository } from '../services/UserServices.js';
 import ValidationError from '../errors/Validation.js';
 import UserAlreadyExistsError from '../errors/UserAlreadyExists.js';
 import UserNotFoundError from '../errors/UserNotFound.js';
 import SpentAllAttemptsError from "../errors/SpentAllAttempts.js";
-import { BCRYPT, JWT } from '../services/Hash.js';
+import { BCRYPT, JWT } from '../services/HashServices.js';
 import { validateLogin } from '../validations/login.js';
 import { MAX_ATTEMPTS } from "../constants/login.js";
 import LoginError from "../errors/Login.js"; 

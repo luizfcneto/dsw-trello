@@ -1,8 +1,8 @@
-import { JWT } from "../../services/Hash.js";
+import { JWT } from "../../services/HashServices.js";
 import { validateHeadersAuthorization } from "../../validations/authorization.js"
 import ValidationError from "../../errors/Validation.js";
 import jwt from "jsonwebtoken";
-import { userRepository } from "../../services/User.js";
+import { userRepository } from "../../services/UserServices.js";
 import UserNotFoundError from "../../errors/UserNotFound.js";
 
 export const protectedEndpoint = async (req, res, next) => {
