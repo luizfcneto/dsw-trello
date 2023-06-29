@@ -2,7 +2,6 @@ import BoardNotFoundError from '../errors/BoardNotFound.js';
 import ValidationError from '../errors/Validation.js';
 import { validateBoard } from '../validations/board.js';
 import { boardRepository } from '../services/BoardServices.js';
-import { encript } from '../services/HashServices.js';
 
 export default { 
     async getBoardById(req, res, next){

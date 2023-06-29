@@ -3,9 +3,10 @@ import sequelize from "../../database/config.js";
 
 class Board extends Model {};
 
-User.init(
+Board.init(
     {
         id: {
+            type: DataTypes.SMALLINT,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,

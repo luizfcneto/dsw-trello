@@ -1,7 +1,7 @@
 import Board from "../models/Board.js";
 import sequelize from "../../database/config.js";
 
-export const BoardRepository = {
+export const boardRepository = {
     async create(board) {
         await sequelize.sync();
         return await Board.create(board);
