@@ -1,5 +1,6 @@
 import FormCadastro from "./components/pages/FormCadastro.vue";
 import FormLogin from "./components/pages/FormLogin.vue";
+import LoggedHome from "./components/pages/LoggedHome.vue";
 
 export const routes = [
     {
@@ -11,5 +12,10 @@ export const routes = [
         "path": "/login",
         "name": "login",
         "component": FormLogin
+    },
+    {
+        "path": "/home",
+        "name": "home",
+        "component": LoggedHome,
     }
 ]

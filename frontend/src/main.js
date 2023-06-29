@@ -1,12 +1,12 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from "vue"
+import App from "./App.vue"
 import Router from "vue-router";
-import { routes } from './routes.js';
+import { routes } from "./routes.js";
 
 //Informa ao Vue para utilizar o Router
 Vue.use(Router);
 
-const router = new Router({
+export const router = new Router({
   mode: 'history',
   routes: routes,
 });
