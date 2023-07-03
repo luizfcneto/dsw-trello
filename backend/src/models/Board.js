@@ -27,13 +27,12 @@ Board.init(
         modelName: 'Board',
         tableName: 'Boards',
         timestamps: false
-    },
-    
+    });
+
     Board.belongsTo(User, {
         foreignKey: "user_id",
         targetKey: "userId",
         as: "user"
-    }));
-
+    });
 
 export default Board;
