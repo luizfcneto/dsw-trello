@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
+import Board from "./Board.js";
 
 class User extends Model {};
 
@@ -39,7 +40,13 @@ User.init(
         modelName: 'User',
         tableName: 'Users',
         timestamps: false
-    }
+    },
+
+    User.hasMany(Board, {
+        foreignKey: "user_id",
+        sourceKey: "userId",
+        as: "boards"
+    })
 );
 
 export default User;

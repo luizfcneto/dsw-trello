@@ -1,10 +1,10 @@
-import { userBoard } from '../models/userBoard.js';
+import { userBoardRepository } from '../services/UserBoardServices.js';
 
 export default { 
 
     async postUserBoard(){
         try {
-            await BoardUser.create({ UserId: userId, BoardId: boardId });
+            await userBoardRepository.post({ UserId: userId, BoardId: boardId });
             res.status(201).send('Associação entre usuário e quadro criada com sucesso.');
           } catch (error) {
             res.status(500).send('Erro ao criar associação entre usuário e quadro.');
@@ -14,7 +14,7 @@ export default {
     async getBoards(req, res, next){
         const userId = req.params.id;
         try {
-            const userBoards = await BoardUser.findAll({
+            const userBoards = await userBoardRepository.findAll({
                 where: { UserId: userId },
                 include: [Board]
             });
@@ -26,5 +26,4 @@ export default {
             res.status(500).send('Erro ao obter os quadros do usuário.');
         }
     }
-
 }
