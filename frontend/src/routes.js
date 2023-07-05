@@ -1,17 +1,17 @@
-import FormCadastro from "./components/pages/FormCadastro.vue";
-import FormLogin from "./components/pages/FormLogin.vue";
+import UserRegisterPage from "./components/pages/UserRegisterPage.vue";
+import UserLoginPage from "./components/pages/UserLoginPage.vue";
 import LoggedHome from "./components/pages/LoggedHome.vue";
 
 export const routes = [
     {
         "path": '/cadastro',
         "name": "form-cadastro",
-        "component": FormCadastro
+        "component": UserRegisterPage
     },
     {
         "path": "/login",
         "name": "login",
-        "component": FormLogin
+        "component": UserLoginPage
     },
     {
         "path": "/home",
