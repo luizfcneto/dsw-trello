@@ -23,3 +23,18 @@ export const doLogin = async (login) => {
         return error;
     }
 }
+
+export const getUserByToken = async (token) => {
+    const url = `${process.env.API_URL}/user/`;
+    try {
+        const response = await axios.get(url, {
+            headers: { 'Authorization': `Bearer ${token}`}
+        })
+        return response.data;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+
+}   
