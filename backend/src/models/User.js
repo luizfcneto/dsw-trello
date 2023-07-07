@@ -41,12 +41,6 @@ User.init(
         tableName: 'Users',
         timestamps: false
     },
-
-    User.hasMany(Board, {
-        foreignKey: "user_id",
-        sourceKey: "userId",
-        as: "boards"
-    })
 );
 
 export default User;

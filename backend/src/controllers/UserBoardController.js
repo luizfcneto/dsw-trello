@@ -1,4 +1,5 @@
 import { userBoardRepository } from '../services/UserBoardServices.js';
+import Board from '../models/Board.js';
 
 export default { 
 
@@ -12,7 +13,8 @@ export default {
     },
 
     async getBoards(req, res, next){
-        const userId = req.params.id;
+        console.log(req.params.userId);
+        const userId = req.params.userId;
         try {
             const userBoards = await userBoardRepository.findAll({
                 where: { UserId: userId },
@@ -23,6 +25,7 @@ export default {
                 board: userBoards
             });
         } catch (error) {
+            console.log(error)
             res.status(500).send('Erro ao obter os quadros do usuário.');
         }
     }

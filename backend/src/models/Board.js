@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
+import UserBoard from "./userBoard.js";
 import User from "./User.js";
 
 class Board extends Model {};
@@ -29,10 +30,6 @@ Board.init(
         timestamps: false
     });
 
-    Board.belongsTo(User, {
-        foreignKey: "user_id",
-        targetKey: "userId",
-        as: "user"
-    });
+Board.belongsToMany(User, { through: UserBoard });
 
 export default Board;

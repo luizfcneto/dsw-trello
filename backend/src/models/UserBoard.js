@@ -1,10 +1,11 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
+import User from "./User.js";
+import Board from "./Board.js";
 
 class UserBoard extends Model {};
 
-UserBoard.init(
-    { 
+UserBoard.init({ 
         id: {
             type: DataTypes.SMALLINT,
             allowNull: false,
@@ -13,14 +14,14 @@ UserBoard.init(
             field: 'id'
         },
         userId: {
-          type: DataTypes.SMALLINT,
-          allowNull: false,
-          field: 'user_id'
+            type: DataTypes.SMALLINT,
+            allowNull: false,
+            field: 'user_id'
         },
         boardId: {
-          type: DataTypes.SMALLINT,
-          allowNull: false,
-          field: 'board_id'
+            type: DataTypes.SMALLINT,
+            allowNull: false,
+            field: 'board_id'
         }
     },
     {
@@ -30,5 +31,8 @@ UserBoard.init(
         timestamps: false
     }
 );
+
+UserBoard.belongsToMany(Board, { through: UserBoard });
+UserBoard.belongsToMany(User, { through: UserBoard });
 
 export default UserBoard;
