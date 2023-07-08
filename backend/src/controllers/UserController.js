@@ -39,6 +39,38 @@ export default {
         }
     },
 
+    async getUserByToken(req, res, next) {
+        console.log("getUserByToken executed");
+        const token = req.headers.authorization.split(" ")[1];
+        const payload = JWT.isValid(token);
+        try{
+            const databaseResponse = await userRepository.getByEmail(payload.data.email);
+            if(databaseResponse instanceof Error){
+                throw new UserNotFoundError('User not found');
+            }
+
+            res.status(200).json({
+                user: {
+                    username: databaseResponse.username,
+                    email: databaseResponse.email,
+                }
+            });
+
+        }catch(error){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof UserNotFoundError){
+                res.status(error.statusCode).json({
+                    message: "User Not Found"
+                });
+                return;
+            }
+
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+        }
+    },
+
     async createUser(req, res, next) {
         console.log("Executando o método para criar usuário", req.body);
         let {user} = req.body;
