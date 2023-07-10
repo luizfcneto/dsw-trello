@@ -33,5 +33,21 @@ export const userRepository = {
             },
             { where: { id: user.uniqno } }
         );
-    }
+    },
+
+    async updateRecoveryToken(userId, recoveryToken) {
+        try {
+            const user = await User.findByPk(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
+            user.recoveryToken = recoveryToken;
+            await user.save();
+            
+            return user;
+        } catch (error) {
+            throw new Error('Failed to update recovery token');
+        }
+      }
 }

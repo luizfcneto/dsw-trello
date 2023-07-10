@@ -183,4 +183,54 @@ export default {
         });
         return;
     },
+
+    async recoverPassword(req, res, next) {
+        const {recoverPassword} = req.body;
+        try{
+            let userPersisted = await userRepository.getByEmail(recoverPassword.email);
+
+            if(!userPersisted){
+                throw new UserNotFoundError('User not found');
+            }
+
+            let recoveryToken = userPersisted.getDataValue('recoveryToken');
+
+            if (!recoveryToken || isTokenExpired(recoveryToken)) {
+                // Se não houver um token ou se estiver expirado, gera um novo JWT
+                const token = JWT.sign({ email }, process.env.JWT_SECRET, {
+                    expiresIn: '1h',
+                });
+                // Atualize o recoveryToken no banco de dados
+                await userRepository.updateRecoveryToken(userPersisted.id, token);
+            } else {
+                await userRepository.updateRecoveryToken(userPersisted.id, recoveryToken);
+            }
+
+            const token = JWT.sign({ email }, process.env.JWT_SECRET, {
+                expiresIn: '1h',
+            });
+
+            await userRepository.update(userPersisted);
+
+            res.status(200).json({
+                user: {
+                    token: token,
+                },
+            });
+            return;
+        } catch(error) {
+            if(error instanceof UserNotFoundError) {
+                res.status(error.statusCode).json({
+                    message: "User Not Found"
+                });
+                return; 
+            }
+        }
+    },
+
+    async isTokenExpired(token) {
+        const decodedToken = jwt.decode(token);
+        const currentTime = Math.floor(Date.now() / 1000); // Obtém o tempo atual em segundos
+        return decodedToken.exp < currentTime;
+    }
 }
