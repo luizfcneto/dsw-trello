@@ -31,7 +31,7 @@ export const userRepository = {
                 username: user.username,
                 recoveryToken: user.recoveryToken
             },
-            { where: { user_id: user.uniqno } }
+            { where: { id: user.uniqno } }
         );
     }
 }

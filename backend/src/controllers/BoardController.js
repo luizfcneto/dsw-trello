@@ -2,6 +2,7 @@ import BoardNotFoundError from '../errors/BoardNotFound.js';
 import ValidationError from '../errors/Validation.js';
 import { validateBoard } from '../validations/board.js';
 import { boardRepository } from '../services/BoardServices.js';
+import { userBoardRepository} from '../services/UserBoardServices.js';
 
 export default { 
     async getBoardById(req, res, next){
@@ -38,6 +39,8 @@ export default {
         try{
             validateBoard(board);
             const databaseReponse = await boardRepository.create(board);
+
+            await userBoardRepository.create({ userId: board.userId, boardId: databaseReponse.id });
 
             res.status(201).json({
                 board: databaseReponse

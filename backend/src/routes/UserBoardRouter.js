@@ -4,7 +4,6 @@ import { protectedEndpoint } from "./middlewares/auth.js";
 
 const router = express.Router();
 
-router.post('/board/:boardId/user/:userId', UserBoardController.postUserBoard);
-router.get('/user/:userId/boards', UserBoardController.getBoards);
+router.get('/user/:userId/boards', protectedEndpoint, UserBoardController.getBoards);
 
 export default router;

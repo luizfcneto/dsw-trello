@@ -128,7 +128,7 @@ export default {
             
             if(isSamePassword){
                 const userJwt = JWT.create({ 
-                    id: userPersisted.getDataValue("userId"), 
+                    id: userPersisted.getDataValue("id"), 
                     email: login.email
                 });
 
@@ -139,7 +139,7 @@ export default {
 
                 res.status(200).json({
                     user: {
-                        id: userPersisted.getDataValue("userId"),
+                        id: userPersisted.getDataValue("id"),
                         email: userPersisted.getDataValue("email"),
                         token: userJwt
                     }
