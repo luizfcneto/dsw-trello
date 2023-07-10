@@ -36,10 +36,10 @@ export default {
 
     async createBoard(req, res, next) {
         let {board} = req.body;
+        board.userId = req.params.userId;
         try{
             validateBoard(board);
             const databaseReponse = await boardRepository.create(board);
-
             await userBoardRepository.create({ userId: board.userId, boardId: databaseReponse.id });
 
             res.status(201).json({

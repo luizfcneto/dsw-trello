@@ -1,9 +1,11 @@
 import express from "express";
 import session from "express-session";
 import UserRouter from "./routes/UserRouter.js";
-import { enableCors } from "./routes/middlewares/cors.js";
 import BoardRouter from "./routes/BoardRouter.js";
 import UserBoardRouter from "./routes/UserBoardRouter.js";
+import UserCollectionBoardRouter from "./routes/UserCollectionBoardRouter.js";
+import { enableCors } from "./routes/middlewares/cors.js";
+import { databaseAssociations } from "./models/associations.js";
 
 let app = express();
 const PORT = 3000;
@@ -17,6 +19,10 @@ app.use(express.json());
 app.use('/user', enableCors, UserRouter);
 app.use('/board', enableCors, BoardRouter);
 app.use('/userBoard', enableCors, UserBoardRouter);
+app.use('/collection', enableCors, UserCollectionBoardRouter);
+
+// DatabaseAssociations:
+await databaseAssociations();
 
 app.listen(PORT, HOSTNAME, (error) => {
     if(error){

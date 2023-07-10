@@ -1,5 +1,5 @@
-import User from "../models/User.js";
 import sequelize from "../../database/config.js";
+import User from "../models/User.js";
 
 export const userRepository = {
     async create(user) {

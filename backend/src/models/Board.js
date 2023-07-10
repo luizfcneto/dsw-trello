@@ -22,10 +22,11 @@ Board.init(
         },
     },
     {
-        sequelize,
-        modelName: 'Board',
-        tableName: 'Boards',
-        timestamps: false
-    });
+    sequelize,
+    modelName: 'Board',
+    tableName: 'Boards',
+    timestamps: false
+    }
+);
 
 export default Board;

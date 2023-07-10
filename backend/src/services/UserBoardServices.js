@@ -1,5 +1,8 @@
-import UserBoard from "../models/userBoard.js";
 import sequelize from "../../database/config.js";
+import User from "../models/User.js";
+import Board from "../models/Board.js";
+import UserBoard from "../models/UserBoard.js";
+
 
 export const userBoardRepository = {
     async create(userBoard) {
@@ -12,5 +15,27 @@ export const userBoardRepository = {
         return await UserBoard.findAll({
             where: { userId: userId },
         });
+    },
+
+    async getAllBoardsOfUser(userId) {
+        await sequelize.sync();
+        return await User.findByPk(userId, {
+            include: [
+                {
+                    model: Board,
+                    through: {
+                        model: UserBoard
+                    },
+                    as: 'boards'
+                }
+            ]
+        })
+    },
+
+    async getAllUserCollectionsBoards(userId){
+        await sequelize.sync();
+        const user = await User.findByPk(userId);
+        const userCollections = await user.getCollections();
+        return userCollections;
     }
 }

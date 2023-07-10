@@ -2,17 +2,19 @@ import { userBoardRepository } from '../services/UserBoardServices.js';
 
 export default { 
 
-    async getBoards(req, res, next){
+    async getAllUserBoards(req, res, next){
         const userId = req.params.userId;
         try {
-            const userBoards = await userBoardRepository.findAll(userId);
+            const userBoards = await userBoardRepository.getAllBoardsOfUser(userId);
 
             res.status(200).json({
-                board: userBoards
+                boards: userBoards.boards
             });
         } catch (error) {
             console.log(error)
-            res.status(500).send('Erro ao obter os quadros do usuário.');
+            res.status(500).json({
+                message: "Erro ao obter os quadros do usuário."
+            });
         }
     }
 }
