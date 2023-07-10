@@ -7,6 +7,6 @@ export const enableCors = async (req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); 
     
     // Especificar os cabeçalhos permitidos
-    res.header('Access-Control-Allow-Headers', 'Content-Type'); 
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
     next();
 }

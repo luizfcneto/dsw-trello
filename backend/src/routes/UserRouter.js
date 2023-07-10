@@ -5,6 +5,7 @@ import { protectedEndpoint } from "./middlewares/auth.js";
 const router = express.Router();
 
 router.get("/:id",  UserController.getUserById);
+router.get("/", protectedEndpoint, UserController.getUserByToken);
 
 router.post("/", UserController.createUser);
 

@@ -27,7 +27,7 @@ import { doLogin } from "../../services/api.js";
 import ErrorSpan from "../shared/ErrorSpan.vue";
 
 export default {
-    name: "FormLogin",
+    name: "UserLoginPage",
     components: {
         ErrorSpan,
     },
@@ -72,7 +72,16 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+h2 {
+    width: 100%;
+    text-align: center;
+    margin: 0.5em auto;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+
 .form-login-container {
     display: flex;
     width: 100%;

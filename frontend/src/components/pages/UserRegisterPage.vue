@@ -1,5 +1,5 @@
 <template>
-    <div class="form-cadastro-container">
+    <div class="form-register-container">
         <h2>Cadastro</h2>
         <ErrorSpan class="error-span" v-show="warning.message !== null" :message="warning.message">
         </ErrorSpan>
@@ -31,7 +31,7 @@ import ErrorSpan from "../shared/ErrorSpan.vue";
 
 export default {
     // Nome do componente (opcional)
-    name: 'FormCadastro',
+    name: 'UserRegisterPage',
 
     // Componentes aninhados (opcional)
     components: {
@@ -112,7 +112,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .form-cadastro-container {
     display: flex;
     width: 100%;
