@@ -1,17 +1,16 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
-import Board from "./Board.js";
 
 class User extends Model {};
 
 User.init(
     {
-        userId: {
+        id: {
             type: DataTypes.SMALLINT,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
-            field: 'user_id'
+            field: 'id'
         },
         username: {
             type: DataTypes.STRING,
