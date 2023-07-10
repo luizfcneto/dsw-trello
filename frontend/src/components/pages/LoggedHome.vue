@@ -53,43 +53,10 @@ export default {
                         {
                             id: 1,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadroXEncriptado"
                         },
-                        {
-                            id: 2,
-                            title: "Quadro X",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 3,
-                            title: "Quadro 3",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 4,
-                            title: "Quadro 4",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 5,
-                            title: "Quadro 5",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 6,
-                            title: "Quadro 6",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 7,
-                            title: "Quadro 7",
-                            backgroundColor: ""
-                        },
-                        {
-                            id: 8,
-                            title: "Quadro 8",
-                            backgroundColor: ""
-                        }
+
                     ]
                 },
                 {
@@ -99,42 +66,50 @@ export default {
                         {
                             id: 10,
                             title: "Quadro 10",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro10Encriptado"
                         },
                         {
                             id: 15,
                             title: "Quadro 15",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro15Encriptado"
                         },
                         {
                             id: 13,
                             title: "Quadro 13",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro13Encriptado"
                         },
                         {
                             id: 19,
                             title: "Quadro 19",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro19Encriptado"
                         },
                         {
                             id: 20,
                             title: "Quadro 20",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro20Encriptado"
                         },
                         {
                             id: 33,
                             title: "Quadro 33",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro33Encriptado"
                         },
                         {
                             id: 70,
                             title: "Quadro 70",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro70Encriptado"
                         },
                         {
                             id: 18,
                             title: "Quadro 18",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro18Encriptado"
                         }
                     ]
                 },
@@ -145,42 +120,50 @@ export default {
                         {
                             id: 50,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro50Encriptado"
                         },
                         {
                             id: 51,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro51Encriptado"
                         },
                         {
                             id: 52,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro52Encriptado"
                         },
                         {
                             id: 53,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro53Encriptado"
                         },
                         {
                             id: 54,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro54Encriptado"
                         },
                         {
                             id: 55,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro55Encriptado"
                         },
                         {
                             id: 56,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro56Encriptado"
                         },
                         {
                             id: 57,
                             title: "Quadro X",
-                            backgroundColor: ""
+                            backgroundColor: "",
+                            path_url: "quadro57Encriptado"
                         }
                     ]
                 }
@@ -213,11 +196,11 @@ export default {
     },
 
     watch: {
-        isLogged(newValue) {
+        async isLogged(newValue) {
             console.log("watch acionado valor de newValue: ", newValue);
             if (newValue) {
                 console.log("newValue positivo");
-                this.getUserInfo();
+                await this.getUserInfo();
             }
         }
     },

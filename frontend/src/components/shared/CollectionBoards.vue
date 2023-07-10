@@ -2,11 +2,12 @@
     <div class="container-collection">
         <p class="collection-name"> {{ collectionName }} </p>
         <ul class="container-boards">
-            <li class="board" v-for="(board, index) of boards" :key="index">
-                <router-link class="nav-link" :to="board.id">
-                    <p class="board-title"> {{ board.title }} </p>
+            <li class="board-element" v-for="(board, index) of boards" :key="index">
+                <router-link class="nav-link" :to="{ path: `/board/${encodeURIComponent(board.path_url)}` }">
+                    <div class="board-linked">
+                        <p class="board-title"> {{ board.title }} </p>
+                    </div>
                 </router-link>
-
             </li>
         </ul>
     </div>
@@ -64,20 +65,20 @@ export default {
     margin: 1em auto 2.5em auto;
     background-color: #fff;
     justify-content: flex-start;
-
+    padding-bottom: 1em;
 }
 
 ul,
 li {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.board {
+.board-element {
     border-radius: 10px;
-    width: 15%;
-    margin: 1em;
-    padding: 2em;
-    background-color: aqua;
+    width: 28%;
+    margin: 0.75em;
     max-height: 3em;
 }
 
@@ -89,5 +90,16 @@ li {
 
 .nav-link {
     text-decoration: none;
+}
+
+.board-linked {
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5em;
+    cursor: pointer;
+    background-color: aqua;
+
 }
 </style>
