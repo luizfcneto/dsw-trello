@@ -38,3 +38,36 @@ export const getUserByToken = async (token) => {
     }
 
 }   
+
+export const getUserCollectionBoards = async (token) => {
+    const url = `${process.env.API_URL}/collection/user/boards`;
+    try{
+        const response = await axios.get(url, {
+            headers: { 'Authorization': `Bearer ${token}`}
+        });
+        console.log(response);
+        return response.data;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}
+
+export const createBoardCollection = async (token, request) => {
+    const url = `${process.env.API_URL}/board/`;
+    try{
+        console.log("request.collection");
+        console.log(request.collection);
+        const response = await axios.post(url, request, {
+            headers: { 'Authorization': `Bearer ${token}`}
+        });
+
+        console.log(response);
+        return response.data;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}

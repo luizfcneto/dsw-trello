@@ -2,29 +2,37 @@
     <form class="board-register-form" @submit.prevent="submitForm">
         <div class="form-group">
             <label for="title">Nome do Quadro: * </label>
-            <input type="text" id="title" name="title" v-model="request.board.title" required>
+            <input type="text" id="title" name="title" v-model.lazy="request.board.title" required>
         </div>
         <div class="dropdown form-group">
             <label for="collection">Coleção: * </label>
-            <select id="collection" name="collection" v-model="selectedCollection">
-                <option value="USA">USA</option>
-                <option value="Canada">Canada</option>
-                <option value="UK">UK</option>
+            <select id="collection" name="collection" v-model="request.collection.name">
+                <option v-for="(collection, index) of collections" :key="index" :value="collection.name">
+                    {{ collection.name }}
+                </option>
                 <option value="Outro">Outro</option>
             </select>
         </div>
 
-        <div class="form-group" v-if="isNewCollection()">
+        <div class="form-group" v-show="showOtherOption">
             <label for="newCollection">Nome da Coleção: * </label>
-            <input type="text" id="newCollection" name="newCollection" v-model="request.board.collection" required>
+            <input type="text" id="newCollection" name="newCollection" v-model.lazy="request.collection.name" required>
         </div>
         <button type="submit">Criar</button>
     </form>
 </template>
 
 <script>
+import { createBoardCollection } from "../../services/api.js";
+
 export default {
     name: "BoardRegister",
+
+    props: {
+        collections: {
+            type: Array,
+        }
+    },
 
     data() {
         return {
@@ -32,17 +40,44 @@ export default {
                 board: {
                     title: "",
                 },
+                collection: {
+                    name: "",
+                }
             },
-            selectedCollection: ""
+            selectedCollection: "",
+            showOtherOption: false,
+        }
+    },
+
+    watch: {
+        request: {
+            handler(newValue, oldValue) {
+                console.log("Objeto user foi alterado", newValue, oldValue);
+                if (newValue.collection.name === "Outro") {
+                    this.showOtherOption = true;
+                }
+            },
+            deep: true
         }
     },
 
     methods: {
-        submitForm() {
+        async submitForm() {
+            console.log("Executando formulário de cadastro de Board");
+            try {
+                console.log("credenciais: ", this.$root.credentials.token);
+                console.log("request: ", this.request);
+                const response = await createBoardCollection(this.$root.credentials.token, this.request);
+                console.log(response);
+                this.$emit('atualizar-pai');
+            } catch (error) {
+                console.error(error);
+            }
 
         },
-        isNewCollection() {
-            return this.selectedCollection === "Outro"
+
+        updateShowOtherOption(oldValue) {
+            return !oldValue;
         }
     },
 

@@ -3,7 +3,7 @@
         <p class="collection-name"> {{ collectionName }} </p>
         <ul class="container-boards">
             <li class="board-element" v-for="(board, index) of boards" :key="index">
-                <router-link class="nav-link" :to="{ path: `/board/${encodeURIComponent(board.path_url)}` }">
+                <router-link class="nav-link" :to="{ path: `/board/${encodeURIComponent(board.pathUrl)}` }">
                     <div class="board-linked">
                         <p class="board-title"> {{ board.title }} </p>
                     </div>
