@@ -78,7 +78,7 @@ export default {
             validateUser(user);
             const userAlreadyExists = await userRepository.alreadyExists(user);
             if(userAlreadyExists){
-                throw new UserAlreadyExistsError("Cannot be persisted with the same email");
+                throw new UserAlreadyExistsError("Cannot be persisted with same email");
             }
             user.password = await BCRYPT.encript(user.password);
             user.attempts = user?.attempts ? user.attempts : 0; 

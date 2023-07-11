@@ -2,13 +2,12 @@ import { userBoardRepository } from "../services/UserBoardServices.js";
 
 export default {
     async getAllUserCollectionBoards(req, res, next){
-        const userId = req.params.userId;
+        const userId = req.headers.userId;
         console.log('getAllUserCollectionBoards executada, id: ', userId);
         try{
             const userCollectionBoards = await userBoardRepository.getAllUserCollectionsBoards(userId);
-            
             res.status(200).json({
-                collectionBoards: userCollectionBoards    
+                collectionBoards: userCollectionBoards.collections
             })
 
         }catch(error){
