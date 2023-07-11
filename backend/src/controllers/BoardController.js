@@ -1,8 +1,11 @@
 import BoardNotFoundError from '../errors/BoardNotFound.js';
 import ValidationError from '../errors/Validation.js';
+import BoardAlreadyExistsError from '../errors/BordAlreadyExists.js';
 import { validateBoard } from '../validations/board.js';
-import { boardRepository } from '../services/BoardServices.js';
+import { validateCollection } from '../validations/collection.js';
+import { boardRepository, createBoardAndAssociations } from '../services/BoardServices.js';
 import { userBoardRepository} from '../services/UserBoardServices.js';
+import { collectionRepository } from '../services/CollectionServices.js';
 
 export default { 
     async getBoardById(req, res, next){
@@ -36,22 +39,37 @@ export default {
 
     async createBoard(req, res, next) {
         let {board} = req.body;
-        board.userId = req.params.userId;
+        let {collection} = req.body;
+        board.userId = req.headers.userId;
         try{
             validateBoard(board);
-            const databaseReponse = await boardRepository.create(board);
-            await userBoardRepository.create({ userId: board.userId, boardId: databaseReponse.id });
+            validateCollection(collection);
 
+            const boardAlreadyExists = await boardRepository.getByUserAndTitle(board);
+            if(boardAlreadyExists){
+                throw new BoardAlreadyExistsError('Cannot be persisted with same title');
+            }
+
+            // Criar quadro
+            const boardCreated = await createBoardAndAssociations(board, collection);
+            
             res.status(201).json({
-                board: databaseReponse
+                board: boardCreated,
             });
-
+            
         }catch(error){
             console.error(`${error.name} - ${error.message}`);
             if(error instanceof ValidationError){
                 res.status(error.statusCode).json({
                     message: "Bad Request, body request is missing information"
                 })
+                return;
+            }
+
+            if(error instanceof BoardAlreadyExistsError){
+                res.status(error.statusCode).json({
+                    message: error.message
+                });
                 return;
             }
             

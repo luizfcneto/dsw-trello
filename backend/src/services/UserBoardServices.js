@@ -2,6 +2,7 @@ import sequelize from "../../database/config.js";
 import User from "../models/User.js";
 import Board from "../models/Board.js";
 import UserBoard from "../models/UserBoard.js";
+import Collection from "../models/Collection.js";
 
 
 export const userBoardRepository = {
@@ -34,8 +35,21 @@ export const userBoardRepository = {
 
     async getAllUserCollectionsBoards(userId){
         await sequelize.sync();
-        const user = await User.findByPk(userId);
-        const userCollections = await user.getCollections();
-        return userCollections;
+        const user = await User.findByPk(userId, {
+            include: [
+                {
+                    model: Collection,
+                    as: 'collections',
+                    include: [
+                        {
+                            model: Board,
+                            as: 'boards'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        return user;
     }
 }
