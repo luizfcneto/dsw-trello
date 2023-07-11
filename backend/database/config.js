@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
     process.env.POSTGRES_DB_PASSWORD, 
     {
         dialect: 'postgres',
-        logging: console.log,
+        logging: false,
         define: {
             charset: 'utf-8',
             collate: 'utf8_general_ci'

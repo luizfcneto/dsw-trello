@@ -17,7 +17,7 @@ export const protectedEndpoint = async (req, res, next) => {
             throw new UserNotFoundError("User not found");
         }
 
-        req.params.userId = data.id;
+        req.headers.userId = data.id;
 
         if(userId.getDataValue("email") !== data.email){
             throw new UserNotFoundError("Unauthorized - claims id and email not matching");

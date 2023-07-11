@@ -1,35 +1,31 @@
-import { Model, DataTypes } from "sequelize";
+import {DataTypes, Model} from 'sequelize';
 import sequelize from "../../database/config.js";
 
-class Board extends Model {};
+class Collection extends Model{};
 
-Board.init(
+Collection.init(
     {
         id: {
             type: DataTypes.SMALLINT,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
-            field: 'id'
         },
-        title: {
+        name: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: false
         },
         userId: {
             type: DataTypes.SMALLINT,
-            allowNull: false,
-        },
-        pathUrl: {
-            type: DataTypes.STRING
+            allowNull: false
         }
     },
     {
         sequelize,
-        modelName: 'Board',
-        tableName: 'Boards',
+        modelName: 'Collection',
+        tableName: 'Collections',
         timestamps: false
     }
 );
 
-export default Board;
+export default Collection;

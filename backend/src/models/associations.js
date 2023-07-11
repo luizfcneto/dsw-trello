@@ -1,11 +1,12 @@
 import User from "./User.js";
 import Board from "./Board.js";
 import UserBoard from "./UserBoard.js";
-import CollectionBoard from "./CollectionBoard.js";
+import Collection from "./Collection.js";
+import BoardCollection from './BoardCollection.js';
 
 export const databaseAssociations = async () => {
     
-    // usuário possui muitos quadros
+    // User Associations:
     User.belongsToMany(Board, {
         through: UserBoard,
         foreignKey: 'userId',
@@ -13,7 +14,13 @@ export const databaseAssociations = async () => {
         as: 'boards'
     });
 
-    // quadro possui muitos membros
+    User.hasMany(Collection, {
+        foreignKey: 'userId',
+        as: 'collections'
+    });
+
+
+    // Boards Associations:
     Board.belongsToMany(User, {
         through: UserBoard,
         foreignKey: 'boardId',
@@ -21,14 +28,57 @@ export const databaseAssociations = async () => {
         as: 'users'
     });
 
-
-    // User possui muitas collections:
-    User.hasMany(CollectionBoard, {
-        foreignKey: "userId",
-        as: "collections", // Alias para a associação
+      
+    Board.belongsToMany(Collection, {
+        through: 'BoardCollection',
+        foreignKey: 'boardId',
+        otherKey: 'collectionId',
+        as: 'collections'
     });
+
+
+    // UserBoard Associations:
+    UserBoard.belongsTo(User, {
+        foreignKey: 'userId',
+        as: 'user'
+    });
+      
+    UserBoard.belongsTo(Board, {
+        foreignKey: 'boardId',
+        as: 'board'
+    });
+
+
+    // Collection Associations:
+    Collection.belongsTo(User, {
+        foreignKey: 'userId',
+        as: 'user'
+    });
+      
+    Collection.belongsToMany(Board, {
+        through: 'BoardCollection',
+        foreignKey: 'collectionId',
+        otherKey: 'boardId',
+        as: 'boards'
+    });
+
+
+    // Board Collections Associations:
+    BoardCollection.belongsTo(Board, {
+        foreignKey: 'boardId',
+        as: 'board'
+    });
+      
+    BoardCollection.belongsTo(Collection, {
+        foreignKey: 'collectionId',
+        as: 'collection'
+    });
+      
 
     await User.sync();
     await Board.sync();
+    await Collection.sync();
     await UserBoard.sync();
+    await BoardCollection.sync();
+
 }
