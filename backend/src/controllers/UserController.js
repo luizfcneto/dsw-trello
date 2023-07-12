@@ -6,8 +6,10 @@ import UserNotFoundError from '../errors/UserNotFound.js';
 import SpentAllAttemptsError from "../errors/SpentAllAttempts.js";
 import { BCRYPT, JWT } from '../services/HashServices.js';
 import { validateLogin } from '../validations/login.js';
+import { validateRecoverPassword } from '../validations/user.js';
 import { MAX_ATTEMPTS } from "../constants/login.js";
 import LoginError from "../errors/Login.js"; 
+import jwt from "jsonwebtoken";
 
 export default { 
     async getUserById(req, res, next){
@@ -187,34 +189,28 @@ export default {
     async recoverPassword(req, res, next) {
         const {recoverPassword} = req.body;
         try{
+            validateRecoverPassword(recoverPassword);
             let userPersisted = await userRepository.getByEmail(recoverPassword.email);
-
+            
             if(!userPersisted){
                 throw new UserNotFoundError('User not found');
             }
-
+            
             let recoveryToken = userPersisted.getDataValue('recoveryToken');
 
-            if (!recoveryToken || isTokenExpired(recoveryToken)) {
+            if (!recoveryToken || !JWT.isValid(recoveryToken)) {
                 // Se não houver um token ou se estiver expirado, gera um novo JWT
-                const token = JWT.sign({ email }, process.env.JWT_SECRET, {
-                    expiresIn: '1h',
+                const token = JWT.createRecoveryToken({ 
+                    id: userPersisted.getDataValue("id"), 
+                    email: recoverPassword.email
                 });
                 // Atualize o recoveryToken no banco de dados
-                await userRepository.updateRecoveryToken(userPersisted.id, token);
-            } else {
-                await userRepository.updateRecoveryToken(userPersisted.id, recoveryToken);
-            }
-
-            const token = JWT.sign({ email }, process.env.JWT_SECRET, {
-                expiresIn: '1h',
-            });
-
-            await userRepository.update(userPersisted);
-
+                userPersisted = await userRepository.updateRecoveryToken(userPersisted.id, token);
+            } 
+            
             res.status(200).json({
                 user: {
-                    token: token,
+                    recoveryToken: userPersisted.recoveryToken
                 },
             });
             return;
@@ -225,12 +221,10 @@ export default {
                 });
                 return; 
             }
+
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
         }
     },
-
-    async isTokenExpired(token) {
-        const decodedToken = jwt.decode(token);
-        const currentTime = Math.floor(Date.now() / 1000); // Obtém o tempo atual em segundos
-        return decodedToken.exp < currentTime;
-    }
 }

@@ -33,3 +33,9 @@ export const validatePassword = (password) => {
 
     return /.*[a-zA-Z].*$/.test(password) && /.*[0-9].*$/.test(password);
 }
+
+export const validateRecoverPassword = (recoverPassword) => {
+    if(!validateEmail(recoverPassword.email)){
+        throw new Error('Email not valid');
+    }
+}
