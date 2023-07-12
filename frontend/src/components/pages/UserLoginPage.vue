@@ -24,6 +24,7 @@
 
 <script>
 import { doLogin } from "../../services/api.js";
+import { clearToken } from "@/services/logout";
 import ErrorSpan from "../shared/ErrorSpan.vue";
 
 export default {
@@ -67,6 +68,10 @@ export default {
             this.$data.request.login.password = "";
         }
 
+    },
+
+    created() {
+        clearToken(this.$root);
     }
 }
 </script>

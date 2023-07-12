@@ -8,14 +8,18 @@
                 <BoardRegister @atualizar-pai="newBoard" :collections="collectionsBoards"></BoardRegister>
             </div>
 
-            <div v-if="isCollectionReady" class="container-boards-collection">
+            <div v-if="!isCollectionReady" class="container-boards-collection">
+                <h2> ... </h2>
+            </div>
+            <div v-if="isCollectionReady" v-show="!isEmpty" class="container-boards-collection">
                 <div v-for="(collection, index) of collectionsBoards" :key="index">
                     <CollectionBoards :collectionName="collection.name" :boards="collection.boards">
                     </CollectionBoards>
                 </div>
             </div>
-            <div v-if="!isCollectionReady" class="container-boards-collection">
-                <h2> ... </h2>
+            <div v-show="isEmpty" class="container-boards-collection-empty">
+                <h3> Nenhum Quadro Registrado </h3>
+                <p> Cadastre um quadro novo utilizando o formulário ao lado</p>
             </div>
 
         </div>
@@ -50,8 +54,8 @@ export default {
             },
             isHeaderProfileReady: false,
             collectionsBoards: [],
-            isCollectionReady: false
-            // collectionsBoardsIsEmpty: tre
+            isCollectionReady: false,
+            isEmpty: false
         }
     },
 
@@ -80,6 +84,11 @@ export default {
             try {
                 const { collectionBoards } = await getUserCollectionBoards(this.$root.credentials.token);
                 this.collectionsBoards = collectionBoards;
+                if (this.collectionsBoards.length === 0) {
+                    this.isEmpty = true;
+                } else {
+                    this.isEmpty = false;
+                }
                 this.isCollectionReady = true;
             } catch (error) {
                 console.error(error.name, error.message);
@@ -87,7 +96,6 @@ export default {
         },
 
         async newBoard() {
-            console.log("newBoard acionado");
             await this.getUserBoards();
         }
 
@@ -95,12 +103,10 @@ export default {
 
     async created() {
         if (!this.isLogged()) {
-            console.log("não esta logado, redirecionado pro logout -> login page")
             logout(this.$root);
         }
 
         if (this.isLogged()) {
-            console.log("está logado, carregar informações do usuário");
             await this.getUserInfo();
             await this.getUserBoards();
         }
@@ -118,6 +124,18 @@ h2 {
     font-weight: bold;
 }
 
+
+h3 {
+    width: 100%;
+    text-align: center;
+    margin: 0.5em auto;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+p {
+    font-size: 20px;
+}
 
 .logged-home {
     z-index: 1;
@@ -137,5 +155,14 @@ h2 {
 
 .container-boards-collection {
     width: 80%;
+}
+
+.container-boards-collection-empty {
+    width: 70%;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 10px;
+    background-color: red;
+    padding: 1em;
 }
 </style>

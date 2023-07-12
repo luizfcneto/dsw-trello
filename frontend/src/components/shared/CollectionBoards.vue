@@ -33,12 +33,6 @@ export default {
         }
     },
 
-    data() {
-        return {
-        }
-    }
-
-
 }
 
 </script>
@@ -100,6 +94,5 @@ li {
     padding: 1.5em;
     cursor: pointer;
     background-color: aqua;
-
 }
 </style>

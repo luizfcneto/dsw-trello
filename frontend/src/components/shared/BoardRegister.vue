@@ -6,7 +6,7 @@
         </div>
         <div class="dropdown form-group">
             <label for="collection">Coleção: * </label>
-            <select id="collection" name="collection" v-model="request.collection.name">
+            <select id="collection" name="collection" v-model="selectedCollection">
                 <option v-for="(collection, index) of collections" :key="index" :value="collection.name">
                     {{ collection.name }}
                 </option>
@@ -16,7 +16,7 @@
 
         <div class="form-group" v-show="showOtherOption">
             <label for="newCollection">Nome da Coleção: * </label>
-            <input type="text" id="newCollection" name="newCollection" v-model.lazy="request.collection.name" required>
+            <input type="text" id="newCollection" name="newCollection" v-model="request.collection.name" required>
         </div>
         <button type="submit">Criar</button>
     </form>
@@ -51,24 +51,33 @@ export default {
 
     watch: {
         request: {
-            handler(newValue, oldValue) {
-                console.log("Objeto user foi alterado", newValue, oldValue);
+            handler(newValue) {
                 if (newValue.collection.name === "Outro") {
                     this.showOtherOption = true;
                 }
             },
             deep: true
+        },
+        selectedCollection: function (valueSelected) {
+            if (valueSelected === "Outro") {
+                this.showOtherOption = true;
+            } else {
+                this.showOtherOption = false;
+                this.request.collection.name = valueSelected;
+            }
         }
     },
 
     methods: {
+        updateRequestCollectionName() {
+            if (!this.showOtherOption) {
+                this.request.collection.name = this.selectedCollection;
+            }
+        },
         async submitForm() {
-            console.log("Executando formulário de cadastro de Board");
             try {
-                console.log("credenciais: ", this.$root.credentials.token);
-                console.log("request: ", this.request);
-                const response = await createBoardCollection(this.$root.credentials.token, this.request);
-                console.log(response);
+                this.updateRequestCollectionName();
+                await createBoardCollection(this.$root.credentials.token, this.request);
                 this.$emit('atualizar-pai');
             } catch (error) {
                 console.error(error);
@@ -78,7 +87,9 @@ export default {
 
         updateShowOtherOption(oldValue) {
             return !oldValue;
-        }
+        },
+
+
     },
 
     async created() {

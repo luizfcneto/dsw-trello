@@ -57,13 +57,9 @@ export const getUserCollectionBoards = async (token) => {
 export const createBoardCollection = async (token, request) => {
     const url = `${process.env.API_URL}/board/`;
     try{
-        console.log("request.collection");
-        console.log(request.collection);
         const response = await axios.post(url, request, {
             headers: { 'Authorization': `Bearer ${token}`}
         });
-
-        console.log(response);
         return response.data;
 
     }catch(error){
