@@ -23,6 +23,11 @@ export const userRepository = {
         return await User.findOne({ where: { email: email } } );
     },
 
+    async getByRecoveryToken(recoveryToken) {
+        await sequelize.sync();
+        return await User.findOne({ where: { recoveryToken: recoveryToken } } );
+    },
+
     async update(user) {
         await sequelize.sync();
         return await User.update(
@@ -49,5 +54,5 @@ export const userRepository = {
         } catch (error) {
             throw new Error('Failed to update recovery token');
         }
-      }
+    }
 }

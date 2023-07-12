@@ -1,15 +1,15 @@
-import { validateUser } from '../validations/user.js';
+import { passwordsMatch, validateUser } from '../validations/user.js';
 import { userRepository } from '../services/UserServices.js';
 import ValidationError from '../errors/Validation.js';
 import UserAlreadyExistsError from '../errors/UserAlreadyExists.js';
 import UserNotFoundError from '../errors/UserNotFound.js';
+import PasswordsDontMatch from '../errors/PasswordsDontMatch.js';
 import SpentAllAttemptsError from "../errors/SpentAllAttempts.js";
 import { BCRYPT, JWT } from '../services/HashServices.js';
 import { validateLogin } from '../validations/login.js';
 import { validateRecoverPassword } from '../validations/user.js';
 import { MAX_ATTEMPTS } from "../constants/login.js";
 import LoginError from "../errors/Login.js"; 
-import jwt from "jsonwebtoken";
 
 export default { 
     async getUserById(req, res, next){
@@ -77,6 +77,7 @@ export default {
         console.log("Executando o método para criar usuário", req.body);
         let {user} = req.body;
         try{
+            console.log(user);
             validateUser(user);
             const userAlreadyExists = await userRepository.alreadyExists(user);
             if(userAlreadyExists){
@@ -102,6 +103,13 @@ export default {
             if(error instanceof UserAlreadyExistsError){
                 res.status(error.statusCode).json({
                     message: "User already exists."
+                });
+                return;
+            }
+
+            if(error instanceof PasswordsDontMatch){
+                res.status(error.statusCode).json({
+                    message: "Passwords dont match."
                 });
                 return;
             }
@@ -225,6 +233,45 @@ export default {
             res.status(500).json({
                 message: "Something went wrong, try again later..."
             });
+        }
+    },
+
+    async savePassword(req, res, next) {
+        let {recoverPassword} = req.body;
+        try{
+            passwordsMatch(recoverPassword.password, recoverPassword.confirmPassword);
+            
+            let userPersisted = await userRepository.getByRecoveryToken(recoverPassword.recoveryToken);
+            
+            //salva a nova senha
+            userPersisted.password = await BCRYPT.encript(recoverPassword.password);
+            userPersisted.save();
+
+
+            res.status(201).json({
+                message: "The password was updated"
+            });
+
+        }catch(error){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof ValidationError){
+                res.status(error.statusCode).json({
+                    message: "Bad Request, body request is missing information"
+                })
+                return;
+            }
+            
+            if(error instanceof PasswordsDontMatch){
+                res.status(error.statusCode).json({
+                    message: "Passwords dont match."
+                });
+                return;
+            }
+            
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+            return;
         }
     },
 }

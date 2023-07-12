@@ -1,4 +1,5 @@
 import ValidationError from "../errors/Validation.js";
+import PasswordsDontMatch from "../errors/PasswordsDontMatch.js";
 
 export const validateUser = (user) => {
     if(!user.username){
@@ -8,6 +9,8 @@ export const validateUser = (user) => {
     if(!validatePassword(user.password)){
         throw new ValidationError('password not valid');
     }
+
+    passwordsMatch(user.password, user.confirmPassword);
 
     if(!validateEmail(user.email)){
         throw new ValidationError('email not valid');
@@ -32,6 +35,14 @@ export const validatePassword = (password) => {
     }
 
     return /.*[a-zA-Z].*$/.test(password) && /.*[0-9].*$/.test(password);
+}
+
+export const passwordsMatch = (password, confirmPassword) => {
+    if(password != confirmPassword){
+        throw new PasswordsDontMatch('passwords dont match');
+    }
+
+    return true;
 }
 
 export const validateRecoverPassword = (recoverPassword) => {
