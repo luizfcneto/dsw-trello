@@ -17,7 +17,8 @@
         <div class="options-container">
             <router-link class="options realizar-cadastro" to="/cadastro" target="_self">Não tenho
                 conta</router-link>
-            <router-link class="options esqueci-minha-senha" to="/esqueci" target="_self">Esqueci minha senha</router-link>
+            <router-link class="options esqueci-minha-senha" to="/esqueceu/senha" target="_self">Esqueci minha
+                senha</router-link>
         </div>
     </div>
 </template>

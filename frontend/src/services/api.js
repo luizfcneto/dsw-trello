@@ -38,3 +38,14 @@ export const getUserByToken = async (token) => {
     }
 
 }   
+
+export const getUserRecoveryToken = async (request) => {
+    const url = `${process.env.API_URL}/user/recoverPassword`;
+    try {
+        const response = await axios.post(url, request);
+        return response;
+    } catch(error) {
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}
