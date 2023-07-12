@@ -49,3 +49,16 @@ export const getUserRecoveryToken = async (request) => {
         return error;
     }
 }
+
+
+export const saveUserPasswordRecoveryToken = async (request) => {
+    const url = `${process.env.API_URL}/user/savePassword`;
+    try {
+        const response = await axios.post(url, request);
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}

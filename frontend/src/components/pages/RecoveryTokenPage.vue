@@ -6,12 +6,12 @@
             <p class="form-description">Digite sua nova senha...</p>
             <div class="form-group">
                 <label for="password">Senha: *</label>
-                <input type="password" id="password" name="password" v-model="request.recoveryPassword.password" required>
+                <input type="password" id="password" name="password" v-model="request.recoverPassword.password" required>
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirmar Senha: *</label>
                 <input type="password" id="confirmPassword" name="confirmPassword"
-                    v-model="request.recoveryPassword.confirmPassword" required>
+                    v-model="request.recoverPassword.confirmPassword" required>
             </div>
             <button type="submit">Trocar Senha</button>
         </form>
@@ -20,6 +20,7 @@
 
 <script>
 import ErrorSpan from '../shared/ErrorSpan.vue';
+import { saveUserPasswordRecoveryToken } from "../../services/api.js";
 
 export default {
     name: "RecoveryToken",
@@ -32,7 +33,7 @@ export default {
                 message: null
             },
             request: {
-                recoveryPassword: {
+                recoverPassword: {
                     password: "",
                     confirmPassword: "",
                     recoveryToken: ""
@@ -44,22 +45,19 @@ export default {
 
     methods: {
         async submitForm() {
-            console.log("submitForm executed");
-            // const response = await getUserRecoveryToken(this.request);
-
-            // if (response instanceof Error) {
-            //     this.$router.replace('/esqueceu/senha');
-            // } else {
-            //     console.log("roteando...");
-            //     console.log(response.data);
-            //     this.$router.push(`/login`);
-            // }
+            const response = await saveUserPasswordRecoveryToken(this.request);
+            if (response instanceof Error) {
+                this.$router.replace('/esqueceu/senha');
+            } else {
+                console.log("roteando...");
+                this.$router.push(`/login`);
+            }
         }
     },
 
     created() {
         const recoveryToken = this.$route.params.recoveryToken;
-        this.request.recoveryPassword.recoveryToken = recoveryToken;
+        this.request.recoverPassword.recoveryToken = recoveryToken;
 
     }
 }
