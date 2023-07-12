@@ -3,6 +3,8 @@ import Board from "./Board.js";
 import UserBoard from "./UserBoard.js";
 import Collection from "./Collection.js";
 import BoardCollection from './BoardCollection.js';
+import Card from "./Card.js";
+import List from "./List.js";
 
 export const databaseAssociations = async () => {
     
@@ -74,11 +76,23 @@ export const databaseAssociations = async () => {
         as: 'collection'
     });
       
+    // List associations:
+    List.belongsToMany(Board, {
+        foreignKey: 'boardId',
+        as: 'board'
+    });
+
+    // Card associations
+    Card.belongsToMany(List, {
+        foreignKey: 'listId',
+        as: 'list'
+    });
 
     await User.sync();
     await Board.sync();
     await Collection.sync();
     await UserBoard.sync();
     await BoardCollection.sync();
-
+    await List.sync();
+    await Card.sync();
 }
