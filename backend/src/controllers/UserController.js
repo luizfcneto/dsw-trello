@@ -1,13 +1,16 @@
-import { validateUser } from '../validations/user.js';
+import { validatePasswordChange, validateUser } from '../validations/user.js';
 import { userRepository } from '../services/UserServices.js';
 import ValidationError from '../errors/Validation.js';
 import UserAlreadyExistsError from '../errors/UserAlreadyExists.js';
 import UserNotFoundError from '../errors/UserNotFound.js';
+import PasswordsDontMatch from '../errors/PasswordsDontMatch.js';
 import SpentAllAttemptsError from "../errors/SpentAllAttempts.js";
 import { BCRYPT, JWT } from '../services/HashServices.js';
 import { validateLogin } from '../validations/login.js';
+import { validateRecoverPassword } from '../validations/user.js';
 import { MAX_ATTEMPTS } from "../constants/login.js";
 import LoginError from "../errors/Login.js"; 
+import jwt from "jsonwebtoken";
 
 export default { 
     async getUserById(req, res, next){
@@ -75,6 +78,7 @@ export default {
         console.log("Executando o método para criar usuário", req.body);
         let {user} = req.body;
         try{
+            console.log(user);
             validateUser(user);
             const userAlreadyExists = await userRepository.alreadyExists(user);
             if(userAlreadyExists){
@@ -100,6 +104,13 @@ export default {
             if(error instanceof UserAlreadyExistsError){
                 res.status(error.statusCode).json({
                     message: "User already exists."
+                });
+                return;
+            }
+
+            if(error instanceof PasswordsDontMatch){
+                res.status(error.statusCode).json({
+                    message: "Passwords dont match."
                 });
                 return;
             }
@@ -182,5 +193,92 @@ export default {
             message: "Deslogado com sucesso"
         });
         return;
+    },
+
+    async recoverPassword(req, res, next) {
+        const {recoverPassword} = req.body;
+        try{
+            validateRecoverPassword(recoverPassword);
+            let userPersisted = await userRepository.getByEmail(recoverPassword.email);
+            
+            if(!userPersisted){
+                throw new UserNotFoundError('User not found');
+            }
+            
+            let recoveryToken = userPersisted.getDataValue('recoveryToken');
+
+            if (!recoveryToken || !JWT.isValid(recoveryToken)) {
+                // Se não houver um token ou se estiver expirado, gera um novo JWT
+                const token = JWT.createRecoveryToken({ 
+                    id: userPersisted.getDataValue("id"), 
+                    email: recoverPassword.email
+                });
+                // Atualize o recoveryToken no banco de dados
+                userPersisted = await userRepository.updateRecoveryToken(userPersisted.id, token);
+            } 
+            
+            res.status(200).json({
+                user: {
+                    recoveryToken: userPersisted.recoveryToken
+                },
+            });
+            return;
+        } catch(error) {
+            if(error instanceof UserNotFoundError) {
+                res.status(error.statusCode).json({
+                    message: "User Not Found"
+                });
+                return; 
+            }
+
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+        }
+    },
+
+    async savePassword(req, res, next) {
+        let {recoverPassword} = req.body;
+        try{
+            validatePasswordChange(recoverPassword.password, recoverPassword.confirmPassword, recoverPassword.recoveryToken);
+            
+            let userPersisted = await userRepository.getByRecoveryToken(recoverPassword.recoveryToken);
+            
+            //salva a nova senha
+            userPersisted.password = await BCRYPT.encript(recoverPassword.password);
+            userPersisted.save();
+
+            res.status(201).json({
+                message: "The password was updated"
+            });
+
+        }catch(error){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof ValidationError){
+                res.status(error.statusCode).json({
+                    message: "Bad Request, body request is missing information"
+                })
+                return;
+            }
+            
+            if(error instanceof jwt.TokenExpiredError){
+                res.status(401).json({
+                    message: "Unauthorized - JWT is expired"
+                });
+                return;
+            }
+
+            if(error instanceof PasswordsDontMatch){
+                res.status(error.statusCode).json({
+                    message: "Passwords dont match."
+                });
+                return;
+            }
+            
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+            return;
+        }
     },
 }

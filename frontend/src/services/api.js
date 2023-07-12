@@ -61,7 +61,28 @@ export const createBoardCollection = async (token, request) => {
             headers: { 'Authorization': `Bearer ${token}`}
         });
         return response.data;
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}
 
+export const getUserRecoveryToken = async (request) => {
+    const url = `${process.env.API_URL}/user/recoverPassword`;
+    try {
+        const response = await axios.post(url, request);
+        return response;
+    } catch(error) {
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+}
+
+export const saveUserPasswordRecoveryToken = async (request) => {
+    const url = `${process.env.API_URL}/user/savePassword`;
+    try {
+        const response = await axios.post(url, request);
+        return response;
     }catch(error){
         console.error(`${error.name} - ${error.message}`);
         return error;

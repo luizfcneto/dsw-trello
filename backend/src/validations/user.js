@@ -1,4 +1,7 @@
 import ValidationError from "../errors/Validation.js";
+import PasswordsDontMatch from "../errors/PasswordsDontMatch.js";
+import { JWT } from '../services/HashServices.js'
+import jwt from "jsonwebtoken";
 
 export const validateUser = (user) => {
     if(!user.username){
@@ -8,6 +11,8 @@ export const validateUser = (user) => {
     if(!validatePassword(user.password)){
         throw new ValidationError('password not valid');
     }
+
+    passwordsMatch(user.password, user.confirmPassword);
 
     if(!validateEmail(user.email)){
         throw new ValidationError('email not valid');
@@ -32,4 +37,23 @@ export const validatePassword = (password) => {
     }
 
     return /.*[a-zA-Z].*$/.test(password) && /.*[0-9].*$/.test(password);
+}
+
+export const validatePasswordChange = (password, confirmPassword, recoveryToken) => {
+    if(password != confirmPassword){
+        throw new PasswordsDontMatch('passwords dont match');
+    }
+
+    validatePassword(password);
+    if(!JWT.isValid(recoveryToken)) {
+        throw new jwt.TokenExpiredError("JWT is expired");
+    }
+
+    return true;
+}
+
+export const validateRecoverPassword = (recoverPassword) => {
+    if(!validateEmail(recoverPassword.email)){
+        throw new Error('Email not valid');
+    }
 }

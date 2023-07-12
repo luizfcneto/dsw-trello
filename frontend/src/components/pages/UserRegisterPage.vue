@@ -49,6 +49,7 @@ export default {
                     username: null,
                     email: null,
                     password: null,
+                    confirmPassword: null,
                 }
             }
         }
