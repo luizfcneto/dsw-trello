@@ -2,7 +2,7 @@ import { router } from "../main.js";
 
 export const logout = (vueContext) => {
     clearToken(vueContext);    
-    router.push("/login");
+    router.replace("/login");
 }
 
 export const clearToken = (vueContext) => {
