@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
+import List from "./List.js";
 
 class Card extends Model {};
 
@@ -15,6 +16,10 @@ Card.init(
         listId: {
             type: DataTypes.SMALLINT,
             allowNull: false,
+            references: {
+                model: List,
+                key: "id"
+            }
         },
         content: {
             type: DataTypes.STRING,

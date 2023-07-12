@@ -77,14 +77,19 @@ export const databaseAssociations = async () => {
     });
       
     // List associations:
-    List.belongsToMany(Board, {
-        foreignKey: 'boardId',
+    List.hasMany(Card, {
+        foreignKey: 'list_id',
+        as: 'cards'
+    });
+
+    List.belongsTo(Board, {
+        foreignKey: 'board_id',
         as: 'board'
     });
 
     // Card associations
-    Card.belongsToMany(List, {
-        foreignKey: 'listId',
+    Card.belongsTo(List, {
+        foreignKey: 'list_id',
         as: 'list'
     });
 

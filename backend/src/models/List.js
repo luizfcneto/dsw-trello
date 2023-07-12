@@ -1,5 +1,6 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../../database/config.js";
+import Board from "./Board.js";
 
 class List extends Model {};
 
@@ -15,6 +16,10 @@ List.init(
         boardId: {
             type: DataTypes.SMALLINT,
             allowNull: false,
+            references: {
+                model: Board,
+                key: "id"
+            }
         },
         title: {
             type: DataTypes.STRING,
