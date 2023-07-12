@@ -1,4 +1,4 @@
-import { passwordsMatch, validateUser } from '../validations/user.js';
+import { validatePasswordChange, validateUser } from '../validations/user.js';
 import { userRepository } from '../services/UserServices.js';
 import ValidationError from '../errors/Validation.js';
 import UserAlreadyExistsError from '../errors/UserAlreadyExists.js';
@@ -10,6 +10,7 @@ import { validateLogin } from '../validations/login.js';
 import { validateRecoverPassword } from '../validations/user.js';
 import { MAX_ATTEMPTS } from "../constants/login.js";
 import LoginError from "../errors/Login.js"; 
+import jwt from "jsonwebtoken";
 
 export default { 
     async getUserById(req, res, next){
@@ -239,14 +240,13 @@ export default {
     async savePassword(req, res, next) {
         let {recoverPassword} = req.body;
         try{
-            passwordsMatch(recoverPassword.password, recoverPassword.confirmPassword);
+            validatePasswordChange(recoverPassword.password, recoverPassword.confirmPassword, recoverPassword.recoveryToken);
             
             let userPersisted = await userRepository.getByRecoveryToken(recoverPassword.recoveryToken);
             
             //salva a nova senha
             userPersisted.password = await BCRYPT.encript(recoverPassword.password);
             userPersisted.save();
-
 
             res.status(201).json({
                 message: "The password was updated"
@@ -261,6 +261,13 @@ export default {
                 return;
             }
             
+            if(error instanceof jwt.TokenExpiredError){
+                res.status(401).json({
+                    message: "Unauthorized - JWT is expired"
+                });
+                return;
+            }
+
             if(error instanceof PasswordsDontMatch){
                 res.status(error.statusCode).json({
                     message: "Passwords dont match."
