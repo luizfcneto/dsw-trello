@@ -10,8 +10,6 @@ export default {
 
             validateList(list);
             
-            console.log(!listId);
-            console.log(listId);
             if(!listId) {
                 await listRepository.create(list);
             } else {

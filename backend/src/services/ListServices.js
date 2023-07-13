@@ -10,7 +10,6 @@ export const listRepository = {
     },
     
     async update(listId, listBody) {
-        console.log("list");
         await sequelize.sync();
       
         const updatedList = {

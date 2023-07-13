@@ -10,8 +10,6 @@ export default {
 
             validateCard(card);
             
-            console.log(!cardId);
-            console.log(cardId);
             if(!cardId) {
                 await cardRepository.create(card);
             } else {
