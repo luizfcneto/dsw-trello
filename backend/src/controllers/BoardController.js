@@ -8,10 +8,11 @@ import jwt from 'jsonwebtoken';
 
 export default { 
     async getListsByBoardId(req, res, next){
-        const {board} = req.body;
+        const boardId = req.params.boardId;
         try {
-            //let board = jwt.isValid(boardId);
-            const boardIdDecrypted = board.boardId;
+            let boardJwt = jwt.verify(boardId);
+            console.log(boardJwt);
+            const boardIdDecrypted = boardJwt.boardId;
 
             const databaseResponse = await boardRepository.getListsByBoardId(boardIdDecrypted);
             if(!databaseResponse){
