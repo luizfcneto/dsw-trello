@@ -26,11 +26,11 @@ Card.init(
             allowNull: false,
         },
         creationDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false,
         },
         lastModifiedDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false,
         }
     },

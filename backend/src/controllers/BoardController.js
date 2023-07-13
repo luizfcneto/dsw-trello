@@ -1,6 +1,6 @@
 import BoardNotFoundError from '../errors/BoardNotFound.js';
 import ValidationError from '../errors/Validation.js';
-import BoardAlreadyExistsError from '../errors/BordAlreadyExists.js';
+import BoardAlreadyExistsError from '../errors/BoardAlreadyExists.js';
 import { validateBoard } from '../validations/board.js';
 import { validateCollection } from '../validations/collection.js';
 import { boardRepository, createBoardAndAssociations } from '../services/BoardServices.js';
