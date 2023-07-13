@@ -9,6 +9,7 @@ const router = express.Router();
 // Board
 router.get("/list/:boardId", protectedEndpoint,  BoardController.getListsByBoardId);
 router.post("/", protectedEndpoint, BoardController.createBoard);
+router.delete("/", protectedEndpoint, BoardController.removeBoard);
 
 //List
 // router.get("/list/:id", protectedEndpoint, ListController.createList);

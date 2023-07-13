@@ -83,13 +83,13 @@ export default {
     },
 
     async removeBoard(req, res, next) {
-        let {board} = req.body;
+        const {board} = req.body;
         try{
 
             // Remove quadro
-            await boardRepository.remove(board.boardId);
+            await boardRepository.remove(board.id);
             
-            res.status(201).json({
+            res.status(200).json({
                 message: "Board removed",
             });
             
