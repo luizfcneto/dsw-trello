@@ -3,9 +3,16 @@
         <Header v-show="isHeaderProfileReady" :is-logged="isLogged()" :user="user"></Header>
         <section class="board-info-bar">
             <div class="board-controls">
-                <button class="board-title btn">
-                    <h2>Web Development</h2>
-                </button>
+                <template v-if="!editingTitle">
+                    <button class="board-title btn" @click="startEditingTitle()">
+                        <h2>Web Development</h2>
+                    </button>
+                </template>
+                <template v-else>
+                    <input class="board-title-input" type="text" v-model="newTitle" @blur="stopEditinTitle" autofocus
+                        required>
+                </template>
+
 
                 <!-- <button class="star-btn btn" aria-label="Star Board">
                     <i class="far fa-star" aria-hidden="true"></i>
@@ -14,7 +21,8 @@
         </section>
 
         <section class="lists-container">
-            <BoardList v-for="(list, index) of this.board.lists" :key="index" :list="list"></BoardList>
+            <BoardList v-show="boardListIsLoaded" v-for="(list, index) of this.board.lists" :key="index" :list="list">
+            </BoardList>
             <button class="add-list-btn btn">Add a list</button>
         </section>
 
@@ -47,6 +55,10 @@ export default {
         return {
             isHeaderProfileReady: false,
             user: {},
+            boardRequest: {
+                boardId: "",
+                userId: ""
+            },
             board: {
                 boardId: 1,
                 title: "Meu Quadro",
@@ -78,71 +90,13 @@ export default {
                                 content: "Componente BoardList"
                             }
                         ]
-                    },
-                    {
-                        listId: 3,
-                        title: "TODO",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "Conteudo"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Dormir"
-                            },
-                            {
-                                cardId: 3,
-                                content: "Atualizar Curriculo"
-                            },
-                            {
-                                cardId: 4,
-                                content: "Terminar TCC"
-                            }
-                        ]
-                    },
-                    {
-                        listId: 4,
-                        title: "TESTING",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "Testando Componente List"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Testando Componente Card"
-                            }
-                        ]
-                    },
-                    {
-                        listId: 5,
-                        title: "DONE",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "Componente Header"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Componente LoggedHome"
-                            },
-                            {
-                                cardId: 3,
-                                content: "Componente UserLoginPage"
-                            },
-                            {
-                                cardId: 4,
-                                content: "Componente UserRegisterPage"
-                            },
-                            {
-                                cardId: 5,
-                                content: "Componente ErrorSpan"
-                            }
-                        ]
-                    },
+                    }
                 ]
-            }
+            },
+            newTitle: "",
+            editingTitle: false,
+            boardListIsLoaded: false
+
         }
     },
 
@@ -165,6 +119,15 @@ export default {
         // TODO
         async getBoardInfo() {
 
+        },
+
+        startEditingTitle() {
+            console.log("startEditingTitle chamado");
+            this.editingTitle = true;
+        },
+        stopEditingTitle() {
+            console.log("stopEditinTitle chamad");
+            this.editingTitle = false;
         }
     },
 
@@ -175,6 +138,13 @@ export default {
 
         if (this.isLogged()) {
             await this.getUserInfo();
+            console.log(this.$route.params.boardId);
+            console.log(this.$root.credentials.token);
+            this.boardRequest.boardId = this.$route.params.boardId;
+            this.boardRequest.userId = this.$root.credentials.token;
+
+            // const responseDaChamadaAcima = // trazerInformações do quadro{id} do usuario{id}
+            // this.board = responseDaChamadaAcima;
         }
     }
 

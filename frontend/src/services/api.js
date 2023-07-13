@@ -67,3 +67,14 @@ export const createBoardCollection = async (token, request) => {
         return error;
     }
 }
+
+export const getBoardInfo = async (token, request) => {
+    const url = `${process.env.API_URL}/board/list`;
+    try {
+        const response = await axios.post(url, request, )
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;
+    }
+
+}
