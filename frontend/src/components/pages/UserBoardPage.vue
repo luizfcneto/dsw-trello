@@ -9,7 +9,7 @@
                     </button>
                 </template>
                 <template v-else>
-                    <input class="board-title-input" type="text" v-model="newTitle" @blur="stopEditinTitle" autofocus
+                    <input class="board-title-input" type="text" v-model="newTitle" @blur="stopEditinTitle()" autofocus
                         required>
                 </template>
 
@@ -34,6 +34,7 @@ import Header from '../shared/Header.vue';
 import BoardList from '../shared/BoardList.vue';
 import { logout } from "../../services/logout.js";
 import { getUserByToken } from "../../services/api.js";
+import { getBoardInfoAPI } from "../../services/api.js"
 
 export default {
     name: "UserBoardPage",
@@ -55,48 +56,14 @@ export default {
         return {
             isHeaderProfileReady: false,
             user: {},
-            boardRequest: {
-                boardId: "",
-                userId: ""
-            },
-            board: {
-                boardId: 1,
-                title: "Meu Quadro",
-                lists: [
-                    {
-                        listId: 1,
-                        title: "BACKLOG",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "DescricaoCard"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Card 2"
-                            }
-                        ]
-                    },
-                    {
-                        listId: 2,
-                        title: "Sprint Backlog",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "Componente UserBoardPage"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Componente BoardList"
-                            }
-                        ]
-                    }
-                ]
-            },
+            board: {},
             newTitle: "",
             editingTitle: false,
-            boardListIsLoaded: false
-
+            boardListIsLoaded: false,
+            request: {
+                userId: "",
+                boardId: ""
+            }
         }
     },
 
@@ -116,9 +83,15 @@ export default {
             }
         },
 
-        // TODO
         async getBoardInfo() {
-
+            console.log("getUserInfo executado");
+            try {
+                const response = await getBoardInfoAPI(this.request.userId, this.request.boardId);
+                this.board = response.board;
+                this.boardListIsLoaded = true;
+            } catch (error) {
+                console.error(error.name, error.message);
+            }
         },
 
         startEditingTitle() {
@@ -138,13 +111,10 @@ export default {
 
         if (this.isLogged()) {
             await this.getUserInfo();
-            console.log(this.$route.params.boardId);
-            console.log(this.$root.credentials.token);
-            this.boardRequest.boardId = this.$route.params.boardId;
-            this.boardRequest.userId = this.$root.credentials.token;
-
-            // const responseDaChamadaAcima = // trazerInformações do quadro{id} do usuario{id}
-            // this.board = responseDaChamadaAcima;
+            this.request.boardId = this.$route.params.boardId;
+            this.request.userId = this.$root.credentials.token;
+            const response = await this.getBoardInfo();
+            this.board = response.board;
         }
     }
 

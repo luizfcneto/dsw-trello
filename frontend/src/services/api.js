@@ -89,10 +89,13 @@ export const saveUserPasswordRecoveryToken = async (request) => {
     }
 }
 
-export const getBoardInfo = async (token, request) => {
-    const url = `${process.env.API_URL}/board/list`;
+export const getBoardInfoAPI = async (token, boardToken) => {
+    const url = `${process.env.API_URL}/board/list/${boardToken}`;
     try {
-        const response = await axios.post(url, request, )
+        const response = await axios.get(url, {
+            headers: { 'Authorization': `Bearer ${token}`}
+        });
+        return response;
     }catch(error){
         console.error(`${error.name} - ${error.message}`);
         return error;
