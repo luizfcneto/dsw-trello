@@ -7,7 +7,7 @@ import { protectedEndpoint } from "./middlewares/auth.js";
 const router = express.Router();
 
 // Board
-router.get("/:id", protectedEndpoint,  BoardController.getBoardById);
+router.get("/list", protectedEndpoint,  BoardController.getListsByBoardId);
 router.post("/", protectedEndpoint, BoardController.createBoard);
 
 //List

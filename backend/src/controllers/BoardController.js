@@ -4,15 +4,16 @@ import BoardAlreadyExistsError from '../errors/BordAlreadyExists.js';
 import { validateBoard } from '../validations/board.js';
 import { validateCollection } from '../validations/collection.js';
 import { boardRepository, createBoardAndAssociations } from '../services/BoardServices.js';
-import { userBoardRepository} from '../services/UserBoardServices.js';
-import { collectionRepository } from '../services/CollectionServices.js';
+import jwt from 'jsonwebtoken';
 
 export default { 
-    async getBoardById(req, res, next){
-        const id = req.params.id;
-
+    async getListsByBoardId(req, res, next){
+        const {board} = req.body;
         try {
-            const databaseResponse = await boardRepository.getById(id);
+            //let board = jwt.isValid(boardId);
+            const boardIdDecrypted = board.boardId;
+
+            const databaseResponse = await boardRepository.getListsByBoardId(boardIdDecrypted);
             if(!databaseResponse){
                 throw new BoardNotFoundError("Not found");
             }

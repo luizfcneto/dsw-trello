@@ -1,5 +1,7 @@
 import sequelize from "../../database/config.js";
 import Board from "../models/Board.js";
+import List from "../models/List.js";
+import Card from "../models/Card.js";
 import BoardCollection from "../models/BoardCollection.js";
 import { BCRYPT } from "./HashServices.js";
 import { userBoardRepository } from "./UserBoardServices.js";
@@ -15,6 +17,25 @@ export const boardRepository = {
     async getById(id) {
         await sequelize.sync();
         return await Board.findByPk(id);
+    },
+
+    async getListsByBoardId(boardId) {
+        await sequelize.sync();
+        console.log(boardId);
+
+        return await Board.findByPk(boardId, {
+        include: [
+            {
+                model: List,
+                as: 'lists',
+                include: [
+                    {
+                        model: Card,
+                        as: 'cards'
+                    }
+                ]
+            }]
+        })
     },
 
     async getByUserAndTitle(board){

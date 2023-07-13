@@ -39,6 +39,12 @@ export const databaseAssociations = async () => {
     });
 
 
+    Board.hasMany(List, {
+        foreignKey: 'boardId',
+        as: 'lists'
+    });
+
+
     // UserBoard Associations:
     UserBoard.belongsTo(User, {
         foreignKey: 'userId',
