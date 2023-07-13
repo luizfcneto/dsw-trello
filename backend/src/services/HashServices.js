@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-
 export const BCRYPT = {
     async encript(word) {
         return await bcrypt.hash(word, parseInt(process.env.HASH_SALT_BCRYPT));
@@ -27,8 +26,21 @@ export const JWT = {
         );
     },
 
+    createRecoveryToken(payload) {
+        console.log(payload);
+        return jwt.sign(
+            { data: payload },
+            process.env.JWT_SECRET, 
+            { expiresIn: process.env.JWT_EXPIRES_RECOVERY_PASSWORD },
+        );
+    },
+
     isValid(token) {
-        return jwt.verify(token, process.env.JWT_SECRET);
+        try {
+            return jwt.verify(token, process.env.JWT_SECRET);
+        } catch(error) {
+           return false;
+        }
     }
 
 }
