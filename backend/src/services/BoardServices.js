@@ -21,7 +21,6 @@ export const boardRepository = {
 
     async getListsByBoardId(boardId) {
         await sequelize.sync();
-        console.log(boardId);
 
         return await Board.findByPk(boardId, {
         include: [
@@ -44,6 +43,14 @@ export const boardRepository = {
             where: { title: board.title, userId: board.userId }
         });
     },
+
+    async remove(idBoard){
+        await sequelize.sync();
+        return await Board.destroy({
+            where: { id: idBoard }
+          });
+    },
+
 
     async updateBoard(board){
         await sequelize.sync();
