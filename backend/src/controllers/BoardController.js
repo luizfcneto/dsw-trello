@@ -82,11 +82,13 @@ export default {
     },
 
     async removeBoard(req, res, next) {
-        const {board} = req.body;
+        const boardId = req.params.boardId;
         try{
-
+            let boardJwt = JWT.isValid(boardId);
+            const boardIdDecrypted = boardJwt.data.id;
+            
             // Remove quadro
-            await boardRepository.remove(board.id);
+            await boardRepository.remove(boardIdDecrypted);
             
             res.status(200).json({
                 message: "Board removed",
