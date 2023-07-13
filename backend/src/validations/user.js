@@ -12,7 +12,9 @@ export const validateUser = (user) => {
         throw new ValidationError('password not valid');
     }
 
-    passwordsMatch(user.password, user.confirmPassword);
+    if(!validatePasswordAndConfirmPassword(user.password, user.confirmPassword)){
+        throw  new PasswordsDontMatch('passwords dont match');
+    }
 
     if(!validateEmail(user.email)){
         throw new ValidationError('email not valid');
@@ -40,7 +42,7 @@ export const validatePassword = (password) => {
 }
 
 export const validatePasswordChange = (password, confirmPassword, recoveryToken) => {
-    if(password != confirmPassword){
+    if(validatePasswordAndConfirmPassword(password, confirmPassword)){
         throw new PasswordsDontMatch('passwords dont match');
     }
 
@@ -56,4 +58,8 @@ export const validateRecoverPassword = (recoverPassword) => {
     if(!validateEmail(recoverPassword.email)){
         throw new Error('Email not valid');
     }
+}
+
+export const validatePasswordAndConfirmPassword = (password, confirmPassword) => {
+    return password === confirmPassword;
 }

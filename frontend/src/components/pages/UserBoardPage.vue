@@ -56,7 +56,40 @@ export default {
         return {
             isHeaderProfileReady: false,
             user: {},
-            board: {},
+            board: {
+                boardId: 1,
+                title: "Meu Quadro",
+                lists: [
+                    {
+                        listId: 1,
+                        title: "BACKLOG",
+                        cards: [
+                            {
+                                cardId: 1,
+                                content: "DescricaoCard"
+                            },
+                            {
+                                cardId: 2,
+                                content: "Card 2"
+                            }
+                        ]
+                    },
+                    {
+                        listId: 2,
+                        title: "Sprint Backlog",
+                        cards: [
+                            {
+                                cardId: 1,
+                                content: "Componente UserBoardPage"
+                            },
+                            {
+                                cardId: 2,
+                                content: "Componente BoardList"
+                            }
+                        ]
+                    }
+                ]
+            },
             newTitle: "",
             editingTitle: false,
             boardListIsLoaded: false,

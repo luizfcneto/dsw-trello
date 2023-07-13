@@ -24,7 +24,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 span.error {
     background-color: rgba(235, 28, 28, 0.845);
     font-weight: bold;

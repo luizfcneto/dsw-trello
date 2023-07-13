@@ -18,7 +18,8 @@
             </div>
             <div class="form-group">
                 <label for="confirm-password">Confirmar Senha: * </label>
-                <input type="password" id="confirm-password" name="confirm-password" required>
+                <input type="password" id="confirm-password" name="confirm-password" v-model="request.user.confirmPassword"
+                    required>
             </div>
             <button type="submit">Cadastrar</button>
         </form>
@@ -114,7 +115,7 @@ export default {
 </script>
 
 <style scoped>
-.form-cadastro-container {
+.form-register-container {
     display: flex;
     width: 100%;
     margin: 0 auto;
@@ -123,6 +124,7 @@ export default {
 
 .error-span {
     width: 50%;
+    margin: 0 auto;
 }
 
 .signup-form {
