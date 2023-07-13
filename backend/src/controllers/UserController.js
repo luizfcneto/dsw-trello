@@ -138,7 +138,7 @@ export default {
             const isSamePassword = await BCRYPT.compare(login.password, userPersisted.getDataValue("password"));
             
             if(isSamePassword){
-                const userJwt = JWT.create({ 
+                const userJwt = JWT.createUserToken({ 
                     id: userPersisted.getDataValue("id"), 
                     email: login.email
                 });

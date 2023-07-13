@@ -3,7 +3,7 @@ import Board from "../models/Board.js";
 import List from "../models/List.js";
 import Card from "../models/Card.js";
 import BoardCollection from "../models/BoardCollection.js";
-import { BCRYPT } from "./HashServices.js";
+import { BCRYPT, JWT } from "./HashServices.js";
 import { userBoardRepository } from "./UserBoardServices.js";
 import { collectionRepository } from "./CollectionServices.js";
 import { boardCollectionRepository } from "./BoardCollectionServices.js";
@@ -59,7 +59,7 @@ export const boardRepository = {
 }
 
 export const generatePath = async (boardId) => {  
-    const encripted = await BCRYPT.encript(boardId.toString());
+    const encripted = JWT.createBoardToken({ id: boardId });
     return encripted;
 }
 

@@ -11,8 +11,9 @@ router.post("/", UserController.createUser);
 
 router.post("/login", UserController.login);
 
-router.post("/recoverPassword", UserController.recoverPassword)
-router.post("/savePassword", UserController.savePassword)
+router.post("/recoverPassword", UserController.recoverPassword);
+router.post("/savePassword", UserController.savePassword);
+
 
 /**
  *  protectedEndpoint é um middleware que é executado antes do UserController.logout

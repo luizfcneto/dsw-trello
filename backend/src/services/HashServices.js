@@ -12,26 +12,38 @@ export const BCRYPT = {
 }
 
 export const JWT = {
-    config() {
+    userConfig() {
         return {
             expiresIn: process.env.JWT_EXPIRES
         }
     },
 
-    create(payload) {
+    recoverPasswordConfig(){
+        return {
+            expiresIn: process.env.JWT_EXPIRES_RECOVERY_PASSWORD
+        }
+    },
+
+    createUserToken(payload) {
         return jwt.sign(
             { data: payload },
             process.env.JWT_SECRET,
-            JWT.config()
+            this.userConfig()
         );
     },
 
     createRecoveryToken(payload) {
-        console.log(payload);
         return jwt.sign(
             { data: payload },
             process.env.JWT_SECRET, 
-            { expiresIn: process.env.JWT_EXPIRES_RECOVERY_PASSWORD },
+            this.recoverPasswordConfig()
+        );
+    },
+
+    createBoardToken(payload){
+        return jwt.sign(
+            { data: payload },
+            process.env.JWT_SECRET
         );
     },
 
@@ -39,6 +51,7 @@ export const JWT = {
         try {
             return jwt.verify(token, process.env.JWT_SECRET);
         } catch(error) {
+            console.log(error.name, error.message);
            return false;
         }
     }
