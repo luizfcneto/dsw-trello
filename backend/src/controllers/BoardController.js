@@ -81,6 +81,41 @@ export default {
         }
     },
 
+    async updateBoard(req, res, next) {
+        let {board} = req.body;
+        let {collection} = req.body;
+        board.userId = req.headers.userId;
+        const boardId = req.params.boardId;
+
+        try{
+            validateBoard(board);
+            validateCollection(collection);
+
+            let boardPersisted = await boardRepository.getById(boardId);
+
+            // Criar quadro
+            boardPersisted = await boardRepository.update(boardPersisted);
+            
+            res.status(201).json({
+                message: "Board updated",
+            });
+            
+        }catch(error){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof ValidationError){
+                res.status(error.statusCode).json({
+                    message: "Board without title"
+                })
+                return;
+            }
+
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+            return;
+        }
+    },
+
     async removeBoard(req, res, next) {
         const boardId = req.params.boardId;
         try{

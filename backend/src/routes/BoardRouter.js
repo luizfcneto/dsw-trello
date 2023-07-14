@@ -7,6 +7,7 @@ const router = express.Router();
 // Board
 router.get("/list/:boardId", protectedEndpoint,  BoardController.getListsByBoardId);
 router.post("/", protectedEndpoint, BoardController.createBoard);
+router.put("/update/:boardId", protectedEndpoint, BoardController.updateBoard);
 router.delete("/:boardId", protectedEndpoint, BoardController.removeBoard);
 
 export default router;

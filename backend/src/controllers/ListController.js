@@ -1,19 +1,23 @@
 import ValidationError from "../errors/Validation.js";
+import { JWT } from "../services/HashServices.js";
 import { listRepository } from "../services/ListServices.js";
 import { validateList } from "../validations/list.js"
 
 export default { 
     async save(req, res, next) {
         let {list} = req.body;
-        const listId = req.params.listId;
+        const boardId = req.params.boardId;
         try{
 
             validateList(list);
+
+            let boardJwt = JWT.isValid(boardId);
+            const boardIdDecrypted = boardJwt.data.id;
             
-            if(!listId) {
-                await listRepository.create(list);
+            if(!list.id) {
+                await listRepository.create(list, boardIdDecrypted);
             } else {
-                await listRepository.update(listId, list);
+                await listRepository.update(list.id, list, boardIdDecrypted);
             }
             
             res.status(201).json({

@@ -2,30 +2,32 @@ import sequelize from "../../database/config.js";
 import List from "../models/List.js";
 
 export const listRepository = {
-    async create(listBody) {
+    async create(listBody, boardId) {
         await sequelize.sync();
 
         const incrementOrderIndexQuery = 'UPDATE "Lists" SET "orderIndex" = "orderIndex" + 1 WHERE "boardId" = ? AND "orderIndex" >= ?';
         await sequelize.query(incrementOrderIndexQuery, {
-            replacements: [listBody.boardId, listBody.orderIndex],
+            replacements: [boardId, listBody.orderIndex],
         });
+
+        listBody.boardId = boardId;
 
         return await List.create(listBody);
     },
     
-    async update(listId, listBody) {
+    async update(listId, listBody, boardId) {
         await sequelize.sync();
 
         const persistedList = await this.getById(listId);
         
         const incrementOrderIndexQuery = 'UPDATE "Lists" SET "orderIndex" = "orderIndex" + 1 WHERE "boardId" = ? AND "orderIndex" >= ? AND "orderIndex" <= ?' ;
         await sequelize.query(incrementOrderIndexQuery, {
-            replacements: [listBody.boardId, listBody.orderIndex, persistedList.orderIndex],
+            replacements: [boardId, listBody.orderIndex, persistedList.orderIndex],
         });
 
         const updatedList = {
             title: listBody.title,
-            boardId: listBody.boardId,
+            boardId: boardId,
             orderIndex: listBody.orderIndex
         };
       

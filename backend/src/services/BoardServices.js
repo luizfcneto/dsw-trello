@@ -51,10 +51,18 @@ export const boardRepository = {
           });
     },
 
+    async update(board){
 
-    async updateBoard(board){
+        const updatedBoard = {
+            content: boardBody.content,
+            listId: boardBody.listId,
+        };
+      
+        await Card.update(updatedBoard, {
+            where: { id: boardId }
+        });
+
         await sequelize.sync();
-
     }
 }
 
