@@ -38,6 +38,13 @@ export const listRepository = {
         return updatedList;
     },
 
+    async remove(listId){
+        await sequelize.sync();
+        return await List.destroy({
+            where: { id: listId }
+          });
+    },
+
     async getById(listId){
         await sequelize.sync();
         return await List.findOne({

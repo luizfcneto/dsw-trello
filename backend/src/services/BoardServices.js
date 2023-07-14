@@ -51,14 +51,13 @@ export const boardRepository = {
           });
     },
 
-    async update(board){
+    async update(boardBody, boardId){
 
-        const updatedBoard = {
-            content: boardBody.content,
-            listId: boardBody.listId,
-        };
-      
-        await Card.update(updatedBoard, {
+        console.log(boardBody.title);
+
+        await Board.update({
+            title: boardBody.title,
+        }, {
             where: { id: boardId }
         });
 

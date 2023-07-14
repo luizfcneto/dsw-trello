@@ -28,6 +28,13 @@ export const cardRepository = {
         return updatedCard;
     },
 
+    async remove(cardId){
+        await sequelize.sync();
+        return await Card.destroy({
+            where: { id: cardId }
+          });
+    },
+
     async getById(cardId){
         await sequelize.sync();
         return await Card.findOne({

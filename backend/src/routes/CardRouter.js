@@ -7,5 +7,6 @@ const router = express.Router();
 //Card
 router.post("/save/:cardId", protectedEndpoint, CardController.save);
 router.post("/save/", protectedEndpoint, CardController.save);
+router.delete("/remove/:cardId", protectedEndpoint, CardController.remove);
 
 export default router;

@@ -36,4 +36,29 @@ export default {
         }
     },
 
+    async remove(req, res, next) {
+        const cardId = req.params.cardId;
+        try{
+            // Remove lista
+            await cardRepository.remove(cardId);
+            
+            res.status(200).json({
+                message: "Card removed",
+            });
+            
+        }catch(error){
+            console.error(`${error.name} - ${error.message}`);
+            if(error instanceof ValidationError){
+                res.status(error.statusCode).json({
+                    message: "Bad Request, body request is missing information"
+                })
+                return;
+            }
+
+            res.status(500).json({
+                message: "Something went wrong, try again later..."
+            });
+            return;
+        }
+    }
 }

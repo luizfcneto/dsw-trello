@@ -83,18 +83,19 @@ export default {
 
     async updateBoard(req, res, next) {
         let {board} = req.body;
-        let {collection} = req.body;
         board.userId = req.headers.userId;
         const boardId = req.params.boardId;
 
         try{
             validateBoard(board);
-            validateCollection(collection);
 
-            let boardPersisted = await boardRepository.getById(boardId);
+            let boardJwt = JWT.isValid(boardId);
+            const boardIdDecrypted = boardJwt.data.id;
 
+            let boardPersisted = await boardRepository.getById(boardIdDecrypted);
+            
             // Criar quadro
-            boardPersisted = await boardRepository.update(boardPersisted);
+            boardPersisted = await boardRepository.update(board, boardIdDecrypted);
             
             res.status(201).json({
                 message: "Board updated",
