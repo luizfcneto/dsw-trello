@@ -89,16 +89,43 @@ export const saveUserPasswordRecoveryToken = async (request) => {
     }
 }
 
-export const getBoardInfoAPI = async (token, boardToken) => {
+export const getBoardInfoAPI = async (userToken, boardToken) => {
     const url = `${process.env.API_URL}/board/list/${boardToken}`;
     try {
         const response = await axios.get(url, {
-            headers: { 'Authorization': `Bearer ${token}`}
+            headers: { 'Authorization': `Bearer ${userToken}`}
         });
         return response;
     }catch(error){
         console.error(`${error.name} - ${error.message}`);
         return error;
     }
+}
 
+export const updateBoardInfoAPI = async (userToken, boardToken, updateBoardRequest) => {
+    const url = `${process.env.API_URL}/board/update/${boardToken}`;
+    try{
+        const response = await axios.post(url, updateBoardRequest, {
+            headers: { 'Authorization': `Bearer ${userToken}`}
+        });
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;    
+    }
+}
+
+export const createNewListAPI = async (userToken, boardToken, createNewListRequest) => {
+    const url = `${process.env.API_URL}/list/save/${boardToken}`;
+    try{
+        const response = await axios.post(url, createNewListRequest, {
+            headers: { 'Authorization': `Bearer ${userToken}`}
+        });
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;    
+    }
 }

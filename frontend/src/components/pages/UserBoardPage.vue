@@ -2,17 +2,16 @@
     <div class="board_page_container">
         <Header v-show="isHeaderProfileReady" :is-logged="isLogged()" :user="user"></Header>
         <section class="board-info-bar">
-            <div class="board-controls">
-                <template v-if="!editingTitle">
-                    <button class="board-title btn" @click="startEditingTitle()">
-                        <h2>Web Development</h2>
+            <div class="board-controls" v-show="isBoardListLoaded">
+                <template v-if="!editingTitle && isBoardListLoaded">
+                    <button v-show="isBoardListLoaded" class="board-title-btn" @click="startEditingTitle">
+                        <h2> {{ board.title }}</h2>
                     </button>
                 </template>
                 <template v-else>
-                    <input class="board-title-input" type="text" v-model="newTitle" @blur="stopEditinTitle()" autofocus
-                        required>
+                    <input class="board-title-input" type="text" v-model.lazy="newBoardTitle" @blur="stopEditingTitle"
+                        autofocus>
                 </template>
-
 
                 <!-- <button class="star-btn btn" aria-label="Star Board">
                     <i class="far fa-star" aria-hidden="true"></i>
@@ -21,9 +20,15 @@
         </section>
 
         <section class="lists-container">
-            <BoardList v-show="boardListIsLoaded" v-for="(list, index) of this.board.lists" :key="index" :list="list">
+            <BoardList @refresh-board-info="getBoardInfo" v-show="isBoardListLoaded"
+                v-for="( list, index ) of  this.board.lists " :key="index" :list="list">
             </BoardList>
-            <button class="add-list-btn btn">Add a list</button>
+            <template v-if="!creatingList">
+                <button class="add-list-btn btn" @click="startCreatingList">Add a list</button>
+            </template>
+            <template v-else>
+                <input class="board-list-input" type="text" v-model.lazy="newListTitle" @blur="stopCreatingList" autofocus>
+            </template>
         </section>
 
     </div>
@@ -33,8 +38,7 @@
 import Header from '../shared/Header.vue';
 import BoardList from '../shared/BoardList.vue';
 import { logout } from "../../services/logout.js";
-import { getUserByToken } from "../../services/api.js";
-import { getBoardInfoAPI } from "../../services/api.js"
+import { getUserByToken, getBoardInfoAPI, updateBoardInfoAPI, createNewListAPI } from "../../services/api.js";
 
 export default {
     name: "UserBoardPage",
@@ -55,49 +59,52 @@ export default {
     data() {
         return {
             isHeaderProfileReady: false,
-            user: {},
-            board: {
-                boardId: 1,
-                title: "Meu Quadro",
-                lists: [
-                    {
-                        listId: 1,
-                        title: "BACKLOG",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "DescricaoCard"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Card 2"
-                            }
-                        ]
-                    },
-                    {
-                        listId: 2,
-                        title: "Sprint Backlog",
-                        cards: [
-                            {
-                                cardId: 1,
-                                content: "Componente UserBoardPage"
-                            },
-                            {
-                                cardId: 2,
-                                content: "Componente BoardList"
-                            }
-                        ]
-                    }
-                ]
-            },
-            newTitle: "",
+            isBoardListLoaded: false,
             editingTitle: false,
-            boardListIsLoaded: false,
-            request: {
-                userId: "",
-                boardId: ""
+            creatingList: false,
+            userToken: "",
+            boardToken: "",
+
+            user: {},
+            board: {},
+            newBoardTitle: "",
+            newListTitle: "",
+
+            updateBoardInfoRequest: {
+                list: {
+                    title: ""
+                }
+            },
+
+            createListRequest: {
+                list: {
+                    title: "",
+                    orderIndex: undefined
+                }
             }
         }
+    },
+
+    watch: {
+        newBoardTitle(newValue) {
+            if (newValue !== this.board.title) {
+                this.updateBoardInfoRequest.list.title = newValue;
+                this.updateBoardInfo();
+                this.getBoardInfo();
+            }
+        },
+
+        newListTitle(newValue) {
+            if (newValue) {
+                console.log(this.board);
+                this.createListRequest.list.orderIndex = this.board.lists.length + 1;
+                this.createListRequest.list.title = newValue;
+                this.createNewList();
+                this.getBoardInfo();
+                this.newListTitle = "";
+            }
+        }
+
     },
 
     methods: {
@@ -108,7 +115,7 @@ export default {
         async getUserInfo() {
             console.log("getUserInfo executado");
             try {
-                const { user } = await getUserByToken(this.$root.credentials.token);
+                const { user } = await getUserByToken(this.userToken);
                 this.user = user;
                 this.isHeaderProfileReady = true;
             } catch (error) {
@@ -117,13 +124,33 @@ export default {
         },
 
         async getBoardInfo() {
-            console.log("getUserInfo executado");
+            console.log("getBoardInfo executado");
             try {
-                const response = await getBoardInfoAPI(this.request.userId, this.request.boardId);
-                this.board = response.board;
-                this.boardListIsLoaded = true;
+                const response = await getBoardInfoAPI(this.userToken, this.boardToken);
+                this.board = response.data.board;
+                this.newBoardTitle = this.board.title;
+                this.isBoardListLoaded = true;
             } catch (error) {
                 console.error(error.name, error.message);
+            }
+        },
+
+        async updateBoardInfo() {
+            console.log("updateBoardInfo executed");
+            try {
+                await updateBoardInfoAPI(this.userToken, this.boardToken, this.updateBoardInfoRequest);
+            } catch (error) {
+                console.log(error.name, error.message);
+            }
+        },
+
+        async createNewList() {
+            try {
+                console.log(this.createListRequest);
+                await createNewListAPI(this.userToken, this.boardToken, this.createListRequest);
+                await this.getBoardInfo();
+            } catch (error) {
+                console.log(error.name, error.message);
             }
         },
 
@@ -132,9 +159,18 @@ export default {
             this.editingTitle = true;
         },
         stopEditingTitle() {
-            console.log("stopEditinTitle chamad");
+            console.log("stopEditinTitle chamado");
             this.editingTitle = false;
+        },
+        startCreatingList() {
+            console.log("startCreatingList executed");
+            this.creatingList = true;
+        },
+        stopCreatingList() {
+            console.log("stopCreatingList executed");
+            this.creatingList = false;
         }
+
     },
 
     async created() {
@@ -143,11 +179,10 @@ export default {
         }
 
         if (this.isLogged()) {
+            this.userToken = this.$root.credentials.token;
+            this.boardToken = this.$route.params.boardId;
             await this.getUserInfo();
-            this.request.boardId = this.$route.params.boardId;
-            this.request.userId = this.$root.credentials.token;
-            const response = await this.getBoardInfo();
-            this.board = response.board;
+            await this.getBoardInfo();
         }
     }
 
@@ -208,11 +243,38 @@ export default {
     background-color: #373636;
 }
 
-.board-title h2 {
+.board-title-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: inherit;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+    margin: 1em 0;
+}
+
+.board-title-btn:hover {
+    background-color: #333;
+}
+
+.board-title-btn h2 {
     font-size: 1.8rem;
     font-weight: 700;
     white-space: nowrap;
 }
+
+.board-title-input {
+    margin: 1em 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    white-space: nowrap;
+    width: 60%;
+}
+
+
 
 /* Lists */
 
@@ -251,6 +313,19 @@ export default {
 
 .add-list-btn:hover {
     background-color: #242323;
+}
+
+.board-list-input {
+    flex: 0 0 20rem;
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 400;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    cursor: text;
+    transition: background-color 150ms;
+    text-align: left;
+    background-color: #fff;
 }
 
 
