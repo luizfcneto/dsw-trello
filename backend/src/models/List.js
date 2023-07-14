@@ -28,7 +28,6 @@ List.init(
         orderIndex: {
             type: DataTypes.SMALLINT,
             allowNull: false,
-            field: 'orderIndex'
         }
     },
     {
