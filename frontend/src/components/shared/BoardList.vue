@@ -1,8 +1,18 @@
 <template>
     <div class="list">
-        <div class="list-title">
+        <!-- <div class="list-title">
             <p> {{ list.title }} </p>
+        </div> -->
+        <div v-if="!isUpdatingListTitle" class="list-header-container">
+            <button class="list-icon icon" @click="goToLeft"> left </button>
+            <button class="list-title btn" @click="startingUpdateTitle"> {{ list.title }}</button>
+            <button class="list-icon icon" @click="goToRight"> right </button>
+            <button class="list-icon icon" @click="deleteList"> del </button>
         </div>
+        <div v-else>
+            <input class="input-title" type="text" v-model.lazy="otherListTitle" @blur="stoppingUpdateTitle" autofocus>
+        </div>
+
         <ul class="list-items">
             <CardList v-for="(card, index) of list.cards" :key="index" :card="card"></CardList>
         </ul>
@@ -12,6 +22,7 @@
 
 <script>
 import CardList from './CardList.vue';
+import { updateListInfoAPI, removeListAPI } from "../../services/api.js";
 
 export default {
     name: "BoardList",
@@ -27,11 +38,91 @@ export default {
 
     data() {
         return {
+            isUpdatingListTitle: false,
+            otherListTitle: "",
 
+            userToken: "",
+            boardToken: "",
+
+            updateListRequest: {
+                list: {}
+            }
+        }
+    },
+
+    watch: {
+        async otherListTitle(newValue) {
+            if (newValue !== this.list.title) {
+                console.log("Valor novo da lista:", newValue);
+                this.updateListRequest.list.title = this.otherListTitle;
+                this.updateListInfo();
+            }
         }
     },
 
     methods: {
+        startingUpdateTitle() {
+            this.isUpdatingListTitle = true;
+        },
+        stoppingUpdateTitle() {
+            this.isUpdatingListTitle = false;
+        },
+
+        buildUpdateListRequest(title, orderIndex) {
+            this.updateListRequest.list.title = title;
+            this.updateListRequest.list.orderIndex = orderIndex;
+            this.updateListRequest.list.id = this.list.id;
+        },
+
+        async goToLeft() {
+            if (this.list.orderIndex - 1 > 0) {
+                console.log("this.updateListRequest.list.orderIndex = this.list.orderIndex - 1");
+                this.buildUpdateListRequest(this.list.title, this.list.orderIndex - 1);
+                await this.updateListInfo();
+            }
+        },
+
+        async goToRight() {
+            console.log("this.updateListRequest.list.orderIndex = this.list.orderIndex + 1");
+            this.buildUpdateListRequest(this.list.title, this.list.orderIndex + 1);
+            await this.updateListInfo();
+        },
+
+        clearUpdateListRequest() {
+            this.updateListRequest.list.orderIndex = this.list.orderIndex;
+            this.updateListRequest.list.title = this.list.title;
+            this.updateListRequest.list.id = this.list.id;
+        },
+
+        async updateListInfo() {
+            console.log("updateListInfo() executed");
+            try {
+                await updateListInfoAPI(this.userToken, this.boardToken, this.updateListRequest);
+                this.clearUpdateListRequest();
+                this.$emit('refresh-board-info');
+            } catch (error) {
+                console.error(error.name, error.message);
+            }
+        },
+
+        async deleteList() {
+            console.log("deleteList() executed");
+
+            try {
+                await removeListAPI(this.userToken, this.list.id);
+                this.$emit('refresh-board-info');
+            } catch (error) {
+                console.error(error.name, error.message);
+            }
+        }
+    },
+
+    async created() {
+        console.log("Componente de BoardList Criado");
+        this.userToken = this.$root.credentials.token;
+        this.boardToken = this.$route.params.boardId;
+        console.log(this.list.id);
+        console.log(this.userToken);
 
     }
 }
@@ -45,6 +136,16 @@ export default {
     align-items: center;
     font: inherit;
     background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+}
+
+.icon {
+    font: inherit;
+    background-color: inherit;
     border: none;
     color: inherit;
     padding: 0;
@@ -87,11 +188,29 @@ export default {
     margin-right: 0;
 }
 
+.list-header-container {
+    width: 100%;
+    display: flex;
+}
+
 .list-title {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 500;
     color: #333;
     padding: 1rem;
+    width: 70%;
+}
+
+.input-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    padding: 1rem;
+    width: 89%;
+}
+
+.list-icon {
+    width: 10%;
 }
 
 .list-items {

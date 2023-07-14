@@ -104,8 +104,9 @@ export const getBoardInfoAPI = async (userToken, boardToken) => {
 
 export const updateBoardInfoAPI = async (userToken, boardToken, updateBoardRequest) => {
     const url = `${process.env.API_URL}/board/update/${boardToken}`;
+    console.log(updateBoardRequest);
     try{
-        const response = await axios.post(url, updateBoardRequest, {
+        const response = await axios.put(url, updateBoardRequest, {
             headers: { 'Authorization': `Bearer ${userToken}`}
         });
         return response;
@@ -129,3 +130,34 @@ export const createNewListAPI = async (userToken, boardToken, createNewListReque
         return error;    
     }
 }
+
+export const updateListInfoAPI = async (userToken, boardToken, updateListRequestBody) => {
+    const url = `${process.env.API_URL}/list/save/${boardToken}`;
+    console.log(updateListRequestBody);
+    console.log(userToken);
+    console.log(boardToken);
+    try {
+        const response = await axios.post(url, updateListRequestBody, {
+            headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        return response;
+
+    } catch(error) {
+        console.error(`${error.name} - ${error.message}`);
+    }
+} 
+
+export const removeListAPI = async (userToken, listId) => {
+    const url = `${process.env.API_URL}/list/remove/${listId}`;
+    console.log("Remover listId: ", listId);
+
+    try {
+        const response = await axios.delete(url, {
+            headers: { 'Authorization': `Bearer ${userToken}` }
+        });
+        return response;
+
+    } catch(error) {
+        console.error(`${error.name} - ${error.message}`);
+    }
+} 

@@ -71,8 +71,8 @@ export default {
             newListTitle: "",
 
             updateBoardInfoRequest: {
-                list: {
-                    title: ""
+                board: {
+                    title: "",
                 }
             },
 
@@ -86,21 +86,32 @@ export default {
     },
 
     watch: {
-        newBoardTitle(newValue) {
+        'board.lists': {
+            handler() {
+                console.log("hanlder executado");
+            },
+            immediate: true,
+            deep: true
+        },
+
+        async newBoardTitle(newValue) {
             if (newValue !== this.board.title) {
-                this.updateBoardInfoRequest.list.title = newValue;
-                this.updateBoardInfo();
-                this.getBoardInfo();
+                console.log("Novo Titulo");
+                this.updateBoardInfoRequest.board.title = newValue;
+                console.log(this.updateBoardInfoRequest.board.title);
+
+                await this.updateBoardInfo();
+                await this.getBoardInfo();
             }
         },
 
-        newListTitle(newValue) {
+        async newListTitle(newValue) {
             if (newValue) {
                 console.log(this.board);
                 this.createListRequest.list.orderIndex = this.board.lists.length + 1;
                 this.createListRequest.list.title = newValue;
-                this.createNewList();
-                this.getBoardInfo();
+                await this.createNewList();
+                await this.getBoardInfo();
                 this.newListTitle = "";
             }
         }
@@ -138,7 +149,9 @@ export default {
         async updateBoardInfo() {
             console.log("updateBoardInfo executed");
             try {
-                await updateBoardInfoAPI(this.userToken, this.boardToken, this.updateBoardInfoRequest);
+                const response = await updateBoardInfoAPI(this.userToken, this.boardToken, this.updateBoardInfoRequest);
+                console.log(response);
+
             } catch (error) {
                 console.log(error.name, error.message);
             }
@@ -169,6 +182,10 @@ export default {
         stopCreatingList() {
             console.log("stopCreatingList executed");
             this.creatingList = false;
+        },
+
+        orderLists() {
+            this.board.list.sort((current, next) => next.orderIndex > current.orderIndex);
         }
 
     },
@@ -184,7 +201,13 @@ export default {
             await this.getUserInfo();
             await this.getBoardInfo();
         }
-    }
+    },
+
+    // updated: {
+    //     orderedListsByIndex() {
+    //         return this.board.lists.sort((current, next) => current.orderIndex - next.orderIndex);
+    //     }
+    // }
 
 }
 </script>
