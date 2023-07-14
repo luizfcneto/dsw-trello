@@ -4,7 +4,6 @@ import moment from 'moment';
 
 export const cardRepository = {
     async create(card) {
-        console.log(card);
         await sequelize.sync();
 
         card.lastModifiedDate = moment().format('DD/MM/YYYY');
@@ -14,7 +13,6 @@ export const cardRepository = {
     },
 
     async update(cardId, cardBody) {
-        console.log("card");
         await sequelize.sync();
       
         const updatedCard = {
