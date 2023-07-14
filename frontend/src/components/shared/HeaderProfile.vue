@@ -36,7 +36,6 @@ export default {
     data() {
         return {
             optionsDropDown: [
-                { titulo: "Perfil", url: "/esqueci" },
                 { titulo: "Sair", url: "/login" }
             ]
         }
