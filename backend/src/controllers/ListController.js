@@ -5,8 +5,10 @@ import { validateList } from "../validations/list.js"
 
 export default { 
     async save(req, res, next) {
+        console.log("ListController.save() executed");
         let {list} = req.body;
         const boardId = req.params.boardId;
+        console.log(list);
         try{
 
             validateList(list);
@@ -15,8 +17,10 @@ export default {
             const boardIdDecrypted = boardJwt.data.id;
             
             if(!list.id) {
+                console.log("Criar lista:" );
                 await listRepository.create(list, boardIdDecrypted);
             } else {
+                console.log("Atualizar Lista");
                 await listRepository.update(list.id, list, boardIdDecrypted);
             }
             
@@ -41,7 +45,9 @@ export default {
     },
 
     async remove(req, res, next) {
+        console.log("ListController.remove() executed");
         const listId = req.params.listId;
+        console.log(listId);
         try{
             // Remove lista
             await listRepository.remove(listId);

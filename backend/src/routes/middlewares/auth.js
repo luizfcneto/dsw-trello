@@ -22,7 +22,7 @@ export const protectedEndpoint = async (req, res, next) => {
         if(userId.getDataValue("email") !== data.email){
             throw new UserNotFoundError("Unauthorized - claims id and email not matching");
         }
-
+        console.log("fim protectedEndpoint");
     } catch(error){
         console.error(`${error.name} - ${error.message}`);
         if(error instanceof ValidationError){

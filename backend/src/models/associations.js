@@ -89,7 +89,7 @@ export const databaseAssociations = async () => {
     });
 
     List.belongsTo(Board, {
-        foreignKey: 'board_id',
+        foreignKey: 'boardId',
         as: 'board'
     });
 

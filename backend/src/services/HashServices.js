@@ -51,7 +51,7 @@ export const JWT = {
         try {
             return jwt.verify(token, process.env.JWT_SECRET);
         } catch(error) {
-            console.log(error.name, error.message);
+            console.error(`${error.name}  - ${error.message}`);
            return false;
         }
     }

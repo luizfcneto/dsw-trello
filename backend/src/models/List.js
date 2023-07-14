@@ -19,7 +19,8 @@ List.init(
             references: {
                 model: Board,
                 key: "id"
-            }
+            },
+            field: "boardId"
         },
         title: {
             type: DataTypes.STRING,

@@ -3,15 +3,18 @@ import List from "../models/List.js";
 
 export const listRepository = {
     async create(listBody, boardId) {
+        console.log("Quadro da lista: ", boardId);
+        console.log("Lista: ", listBody);
         await sequelize.sync();
 
+        // Verificar query
         const incrementOrderIndexQuery = 'UPDATE "Lists" SET "orderIndex" = "orderIndex" + 1 WHERE "boardId" = ? AND "orderIndex" >= ?';
         await sequelize.query(incrementOrderIndexQuery, {
             replacements: [boardId, listBody.orderIndex],
         });
-
+        
         listBody.boardId = boardId;
-
+        console.log("Lista Criada na tabela: ", listBody);
         return await List.create(listBody);
     },
     

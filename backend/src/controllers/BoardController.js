@@ -82,10 +82,12 @@ export default {
     },
 
     async updateBoard(req, res, next) {
+        console.log("BoardController.updateBoard executed");
         let {board} = req.body;
+        console.log(board);
+        console.log(req.headers.userId);
         board.userId = req.headers.userId;
         const boardId = req.params.boardId;
-
         try{
             validateBoard(board);
 
