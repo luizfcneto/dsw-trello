@@ -161,3 +161,53 @@ export const removeListAPI = async (userToken, listId) => {
         console.error(`${error.name} - ${error.message}`);
     }
 } 
+
+export const createNewCardAPI = async (userToken, cardRequestBody) => {
+    const url = `${process.env.API_URL}/card/save/`;
+    console.log("CLIENT: userToken: ", userToken);
+    console.log("CLIENT: cardRequestBody: ", cardRequestBody);
+    try{
+        const response = await axios.post(url, cardRequestBody, {
+            headers: { 'Authorization': `Bearer ${userToken}`}
+        });
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;    
+    }
+}
+
+export const updateCardAPI = async (userToken, updateCardRequestBody) => {
+    console.log("CLIENT: userToken: ", userToken);
+    console.log("CLIENT: updateCardRequestBody: ", updateCardRequestBody);
+    const url = `${process.env.API_URL}/card/save/${updateCardRequestBody.card.id}`;
+
+    try{
+        const response = await axios.post(url, updateCardRequestBody, {
+            headers: { 'Authorization': `Bearer ${userToken}`}
+        });
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;    
+    }
+}
+
+export const deleteCardAPI = async (userToken, cardId) => {
+    console.log("CLIENT: userToken: ", userToken);
+    console.log("CLIENT: cardId: ", cardId);
+    const url = `${process.env.API_URL}/card/remove/${cardId}`;
+
+    try{
+        const response = await axios.delete(url, {
+            headers: { 'Authorization': `Bearer ${userToken}`}
+        });
+        return response;
+
+    }catch(error){
+        console.error(`${error.name} - ${error.message}`);
+        return error;    
+    }
+}

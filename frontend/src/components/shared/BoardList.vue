@@ -13,16 +13,24 @@
             <input class="input-title" type="text" v-model.lazy="otherListTitle" @blur="stoppingUpdateTitle" autofocus>
         </div>
 
-        <ul class="list-items">
-            <CardList v-for="(card, index) of list.cards" :key="index" :card="card"></CardList>
-        </ul>
-        <button class="add-card-btn btn">Add a card</button>
+        <div class="list-items">
+            <CardList @refresh-board-info="getBoardInfo" v-for="(card, index) of list.cards" :key="index" :card="card">
+            </CardList>
+        </div>
+        <div v-if="!isCreatingCard">
+            <button class="add-card-btn btn" @click="startingCreateCard">Add a card</button>
+        </div>
+        <div v-else>
+            <input class="input-card-content" type="text" v-model.lazy="newCardContent" @blur="stoppingCreateCard"
+                autofocus>
+
+        </div>
     </div>
 </template>
 
 <script>
 import CardList from './CardList.vue';
-import { updateListInfoAPI, removeListAPI } from "../../services/api.js";
+import { updateListInfoAPI, removeListAPI, createNewCardAPI } from "../../services/api.js";
 
 export default {
     name: "BoardList",
@@ -39,14 +47,21 @@ export default {
     data() {
         return {
             isUpdatingListTitle: false,
+            isCreatingCard: false,
             otherListTitle: "",
+            newCardContent: "",
 
             userToken: "",
             boardToken: "",
 
             updateListRequest: {
                 list: {}
+            },
+
+            createCardRequest: {
+                card: {}
             }
+
         }
     },
 
@@ -54,8 +69,17 @@ export default {
         async otherListTitle(newValue) {
             if (newValue !== this.list.title) {
                 console.log("Valor novo da lista:", newValue);
-                this.updateListRequest.list.title = this.otherListTitle;
-                this.updateListInfo();
+                this.buildUpdateListRequest(newValue, this.list.orderIndex);
+                await this.updateListInfo();
+            }
+        },
+
+        async newCardContent(newValue) {
+            if (newValue) {
+                console.log("Valor de card: ", newValue);
+                this.createCardRequest.card.content = newValue;
+                this.createCardRequest.card.listId = this.list.id;
+                await this.createNewCard();
             }
         }
     },
@@ -66,6 +90,12 @@ export default {
         },
         stoppingUpdateTitle() {
             this.isUpdatingListTitle = false;
+        },
+        startingCreateCard() {
+            this.isCreatingCard = true;
+        },
+        stoppingCreateCard() {
+            this.isCreatingCard = false;
         },
 
         buildUpdateListRequest(title, orderIndex) {
@@ -114,6 +144,22 @@ export default {
             } catch (error) {
                 console.error(error.name, error.message);
             }
+        },
+
+        async createNewCard() {
+            console.log("createNewCard() executed");
+            console.log("this.createCardRequest");
+            console.log(this.createCardRequest);
+            try {
+                await createNewCardAPI(this.userToken, this.createCardRequest);
+                this.$emit('refresh-board-info');
+            } catch (error) {
+                console.error(error.name, error.message);
+            }
+        },
+        async getBoardInfo() {
+            console.log("getBoardInfo do componente BoardList e propagando");
+            this.$emit('refresh-board-info');
         }
     },
 
@@ -121,9 +167,6 @@ export default {
         console.log("Componente de BoardList Criado");
         this.userToken = this.$root.credentials.token;
         this.boardToken = this.$route.params.boardId;
-        console.log(this.list.id);
-        console.log(this.userToken);
-
     }
 }
 </script>
@@ -220,6 +263,7 @@ export default {
     align-content: start;
     padding: 0 0.6rem 0.5rem;
     overflow-y: auto;
+    width: 89%;
 }
 
 .list-items::-webkit-scrollbar {
@@ -231,8 +275,8 @@ export default {
     border-right: 0.6rem solid #e2e4e6;
 }
 
-.list-items li {
-    font-size: 1.4rem;
+.list-items .card-container {
+    font-size: 1rem;
     font-weight: 400;
     line-height: 1.3;
     background-color: #fff;
@@ -245,12 +289,20 @@ export default {
     cursor: pointer;
 }
 
-.list-items li:last-of-type {
+.list-items .card-container:last-of-type {
     margin-bottom: 0;
 }
 
-.list-items li:hover {
+.list-items .card-container:hover {
     background-color: #eee;
+}
+
+.input-card-content {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+    padding: 1rem;
+    width: 89%;
 }
 
 @supports (display: grid) {
