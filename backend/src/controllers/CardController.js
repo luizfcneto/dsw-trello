@@ -4,15 +4,20 @@ import { validateCard } from "../validations/card.js"
 
 export default { 
     async save(req, res, next) {
+        console.log("CardController.save() executed");
         let {card} = req.body;
         const cardId = req.params.cardId;
+        console.log(card);
+        console.log(req.body);
         try{
 
             validateCard(card);
             
             if(!cardId) {
+                console.log("criar card novo");
                 await cardRepository.create(card);
             } else {
+                console.log("atualizar card");
                 await cardRepository.update(cardId, card);
             }
             
@@ -37,7 +42,9 @@ export default {
     },
 
     async remove(req, res, next) {
+        console.log("remove executed");
         const cardId = req.params.cardId;
+        console.log(cardId);
         try{
             // Remove lista
             await cardRepository.remove(cardId);

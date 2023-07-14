@@ -19,7 +19,8 @@ Card.init(
             references: {
                 model: List,
                 key: "id"
-            }
+            },
+            field: 'listId'
         },
         content: {
             type: DataTypes.STRING,
